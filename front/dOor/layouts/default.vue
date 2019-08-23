@@ -10,11 +10,7 @@
           class="navbar-item"
           href="/"
         >
-          <img
-            src="~assets/buefy.png"
-            alt="Buefy"
-            height="28"
-          >
+          dOor
         </a>
 
         <div class="navbar-burger">
@@ -28,7 +24,7 @@
     <section class="main-content columns">
       <aside class="column is-2 section">
         <p class="menu-label is-hidden-touch">
-          General
+          Roles
         </p>
         <ul class="menu-list">
           <li
@@ -58,14 +54,14 @@ export default {
     return {
       items: [
         {
-          title: 'Home',
+          title: 'Event organizer',
           icon: 'home',
           to: { name: 'index' }
         },
         {
-          title: 'Inspire',
-          icon: 'lightbulb',
-          to: { name: 'inspire' }
+          title: 'Attendee',
+          icon: 'account',
+          to: { name: 'user' }
         }
       ]
     }
