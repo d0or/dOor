@@ -6,6 +6,7 @@
           {{ title }}
         </p>
       </header>
+
       <div class="card-content">
         <div class="content has-text-centered">
           <b-icon

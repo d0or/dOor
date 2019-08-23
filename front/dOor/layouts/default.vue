@@ -59,9 +59,9 @@ export default {
           to: { name: 'index' }
         },
         {
-          title: 'Attendee',
+          title: 'Scanner',
           icon: 'account',
-          to: { name: 'user' }
+          to: { name: 'scan' }
         }
       ]
     }
