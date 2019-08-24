@@ -14,7 +14,7 @@
           <div v-if="event.state === 1">
             <b-button @click="callEvent('cancel', event.address)">Cancel attendence</b-button>
             <b-button @click="showQr(event)">Present challange</b-button>
-            <QrProof :qr-value="event.qrValue" :qr-gif-bg-src="event.qrGifBgSrc" />
+            <!-- <QrProof :qr-value="event.qrValue" :qr-gif-bg-src="event.qrGifBgSrc" /> -->
           </div>
           <div v-if="event.state === 2">
             <b-button @click="callEvent('withdraw', event.address)">Withdraw</b-button>
@@ -36,8 +36,8 @@ import Card from '~/components/Card'
 import QrProof from '~/components/QrProof'
 export default {
   components: {
-    Card,
-    QrProof
+    Card
+    // QrProof
   },
   data () {
     const userStateMapping = {
@@ -50,6 +50,7 @@ export default {
 
     return {
       userStateMapping,
+      isComponentModalActive: false,
       qrSize: 150,
       events: [
         {
@@ -101,6 +102,16 @@ export default {
     },
     showQr (event) {
       console.log('event:', event)
+      this.$buefy.modal.open({
+        parent: this,
+        component: QrProof,
+        hasModalCard: true,
+        customClass: 'custom-class custom-class-2',
+        props: {
+          'qrValue': event.qrValue,
+          'qrGifBgSrc': event.qrGifBgSrc
+        }
+      })
     },
     withdraw (eventAddress) {
       this.$store.dispatch('withdraw', eventAddress)
@@ -117,7 +128,6 @@ export default {
 
             console.log(data)
             this.$store.dispatch('setAccount', data)
-            // this.$store.state.account.address = data.account
           })
         } else if (window.ethereum) {
         // privacy mode on
