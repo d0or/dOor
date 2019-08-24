@@ -9,15 +9,15 @@
           icon="calendar-check"
         >
           <div v-if="event.state === 0">
-            <b-button @click="callEvent('rsvp', event.address)">RSVP</b-button>
+            <b-button @click="callEventAction('rsvp', event.address)">RSVP</b-button>
           </div>
           <div v-if="event.state === 1">
-            <b-button @click="callEvent('cancel', event.address)">Cancel attendence</b-button>
+            <b-button @click="callEventAction('cancel', event.address)">Cancel attendence</b-button>
             <b-button @click="showQr(event)">Present challange</b-button>
             <!-- <QrProof :qr-value="event.qrValue" :qr-gif-bg-src="event.qrGifBgSrc" /> -->
           </div>
           <div v-if="event.state === 2">
-            <b-button @click="callEvent('withdraw', event.address)">Withdraw</b-button>
+            <b-button @click="callEventAction('withdraw', event.address)">Withdraw</b-button>
           </div>
           <div v-if="event.state === 3">
             <b-button disabled>Funds withdrew</b-button>
@@ -50,55 +50,22 @@ export default {
 
     return {
       userStateMapping,
-      isComponentModalActive: false,
-      qrSize: 150,
-      events: [
-        {
-          state: 0,
-          name: '<eventName>',
-          address: '<eventAddress>',
-          qrValue: 'https://ipsum.serveo.net/challange?address=X&signature=Y',
-          qrGifBgSrc: '/img/cat.gif'
-        },
-        {
-          state: 1,
-          name: '<eventName>',
-          address: '<eventAddress>',
-          qrValue: 'https://ipsum.serveo.net/challange?address=X&signature=Y',
-          qrGifBgSrc: '/img/cat.gif'
-        },
-        {
-          state: 2,
-          name: '<eventName>',
-          address: '<eventAddress>',
-          qrValue: 'https://ipsum.serveo.net/challange?address=X&signature=Y',
-          qrGifBgSrc: '/img/cat.gif'
-        },
-        {
-          state: 3,
-          name: '<eventName>',
-          address: '<eventAddress>',
-          qrValue: 'https://ipsum.serveo.net/challange?address=X&signature=Y',
-          qrGifBgSrc: '/img/cat.gif'
-        },
-        {
-          state: 4,
-          name: '<eventName>',
-          address: '<eventAddress>',
-          qrValue: 'https://ipsum.serveo.net/challange?address=X&signature=Y',
-          qrGifBgSrc: '/img/cat.gif'
-        }
-      ]
+      isComponentModalActive: false
     }
   },
+  computed: {
+    events () {
+      return this.$store.getters.events
+    }
+  },
+  mounted () {
+    if (!this.$store.state.account.address) { this.getAccount() }
+  },
   methods: {
-    callEvent (eventAddress, action) {
+    callEventAction (eventAddress, action) {
       // make sure account is available
       if (!this.$store.state.account.address) { this.getAccount() }
       this.$store.dispatch(action, eventAddress)
-    },
-    cancel (eventAddress) {
-      this.$store.dispatch('cancel', eventAddress)
     },
     showQr (event) {
       console.log('event:', event)
@@ -112,9 +79,6 @@ export default {
           'qrGifBgSrc': event.qrGifBgSrc
         }
       })
-    },
-    withdraw (eventAddress) {
-      this.$store.dispatch('withdraw', eventAddress)
     },
     getAccount () {
       window.$web3.eth.getAccounts().then((accounts) => {

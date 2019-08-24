@@ -12,7 +12,43 @@ export const state = () => ({
     // signature: null
   },
   error: null,
-  events: []
+  events: [
+    {
+      state: 0,
+      name: '<eventName>',
+      address: '<eventAddress>',
+      qrValue: 'https://ipsum.serveo.net/challange?address=X&signature=Y',
+      qrGifBgSrc: '/img/cat.gif'
+    },
+    {
+      state: 1,
+      name: '<eventName>',
+      address: '<eventAddress>',
+      qrValue: 'https://ipsum.serveo.net/challange?address=X&signature=Y',
+      qrGifBgSrc: '/img/cat.gif'
+    },
+    {
+      state: 2,
+      name: '<eventName>',
+      address: '<eventAddress>',
+      qrValue: 'https://ipsum.serveo.net/challange?address=X&signature=Y',
+      qrGifBgSrc: '/img/cat.gif'
+    },
+    {
+      state: 3,
+      name: '<eventName>',
+      address: '<eventAddress>',
+      qrValue: 'https://ipsum.serveo.net/challange?address=X&signature=Y',
+      qrGifBgSrc: '/img/cat.gif'
+    },
+    {
+      state: 4,
+      name: '<eventName>',
+      address: '<eventAddress>',
+      qrValue: 'https://ipsum.serveo.net/challange?address=X&signature=Y',
+      qrGifBgSrc: '/img/cat.gif'
+    }
+  ]
 })
 
 export const mutations = {
@@ -54,4 +90,6 @@ export const actions = {
   }
 }
 
-export const getters = {}
+export const getters = {
+  events: state => state.events
+}
