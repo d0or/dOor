@@ -20,7 +20,11 @@ contract Ownable{
      * @dev Initializes the contract setting the deployer as the initial owner.
      */
     constructor () internal {
+<<<<<<< HEAD
         _owner = msg.sender();
+=======
+        _owner = _msgSender();
+>>>>>>> 340e0c6e881c49891e1f43608d2adcc742addca2
         emit OwnershipTransferred(address(0), _owner);
     }
 
@@ -43,7 +47,11 @@ contract Ownable{
      * @dev Returns true if the caller is the current owner.
      */
     function isOwner() public view returns (bool) {
+<<<<<<< HEAD
         return msg.sender() == _owner;
+=======
+        return _msgSender() == _owner;
+>>>>>>> 340e0c6e881c49891e1f43608d2adcc742addca2
     }
 
     /**
