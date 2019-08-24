@@ -77,7 +77,7 @@ contract Door is Ownable, Initializable {
     }
 
     function userHasEventTicket() public view returns (bool indeed) {
-        return user[msg.sender].ticketStatus == AttendanceTypes.REGISTERED;
+        return users[msg.sender].ticketStatus == AttendanceTypes.REGISTERED;
     }
 
     function setUserHasAttendedByOwner(address payable userAddress) public onlyOwner{
