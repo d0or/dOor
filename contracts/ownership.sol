@@ -48,6 +48,7 @@ contract Ownable{
      */
     function isOwner() public view returns (bool) {
 <<<<<<< HEAD
+<<<<<<< HEAD
         return msg.sender() == _owner;
 =======
         return _msgSender() == _owner;
