@@ -37,7 +37,8 @@ export default {
     return {
       userStateMapping,
       qrSize: 150,
-      events: []
+      events: [],
+      account: {}
     }
   },
   computed: {
@@ -74,13 +75,20 @@ export default {
       })
     },
 
-    async buyTicket () {
+    buyTicket (event) {
+      const doorContract = new window.$web3.eth.Contract(DoorAbi, event.address, {
+        from: this.account,
+        gasPrice: '200000000'
+      })
 
+      doorContract.methods.buyEventTicket().send({
+        value: event.price
+      })
     },
 
-    async getDoors (account) {
+    async getDoors () {
       const doorFactory = new window.$web3.eth.Contract(DoorFactoryAbi, '0x3EeD37643788B70328d12e132A69E5A922B2c5c9', {
-        from: account,
+        from: this.account,
         gasPrice: '200000000'
       })
 
@@ -93,7 +101,7 @@ export default {
       const doorAdresses = await Promise.all(promises)
       const doorsPromises = doorAdresses.map((doorAddress) => {
         const doorContract = new window.$web3.eth.Contract(DoorAbi, doorAddress, {
-          from: account,
+          from: this.account,
           gasPrice: '200000000'
         })
         return new Promise((resolve, reject) => {
@@ -109,10 +117,10 @@ export default {
       this.events = await Promise.all(doorsPromises)
     },
 
-    async getBalance (account) {
-      const balance = await window.$web3.eth.getBalance(account)
+    async getBalance () {
+      const balance = await window.$web3.eth.getBalance(this.account)
       const data = {
-        address: account,
+        address: this.account,
         balance: Number(window.$web3.utils.fromWei(balance)).toFixed(3).toLocaleString()
       }
       console.log(data)
@@ -122,15 +130,17 @@ export default {
       const accounts = window.$web3.eth.getAccounts()
 
       if (accounts.length && accounts[0]) {
+        this.account = accounts[0]
         // just get the account address and balance
-        this.getBalance(accounts[0])
+        this.getBalance()
         // this.getDoors(accounts[0])
         // this.$store.dispatch('setAccount', data)
       } else if (window.ethereum) {
         // privacy mode on
         const accounts = await window.ethereum.enable()
+        this.account = accounts[0]
         // this.getBalance(accounts[0])
-        this.getDoors(accounts[0])
+        this.getDoors()
       }
     }
     // ,
