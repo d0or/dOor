@@ -1,15 +1,53 @@
-pragma solidity >=0.4.22 <0.6.0;
+//EthBerlinZwei Hackathon
+//
+//>>> DOor <<<
+//Everything's decentralized but not your Đoor: Event ticket tokens
 
-contract Door {
+pragma solidity ^0.5.0;
 
-    address public owner;
+import "./ownership.sol";
+
+contract doorManager is Ownable{
+    //Variables
+    Door myEvent;
+    address[] private eventAddresses;
+    mapping (address => bool) public eventCreated;
+
+    //Events
+    event LogNewEventCreated(address indexed eventOwner, address indexed eventAddress);
+
+    //Create new Event
+    function createNewEvent(uint ticketPrice) public returns(bool success,  address newEventAddress){
+        myEvent = new Door(ticketPrice);
+
+        //Append address of the new created event to the event array
+        eventAddresses.push(address(myEvent));
+
+        //Confirm creation of event
+        eventCreated[address(myEvent)] = true;
+
+        emit LogNewEventCreated(msg.sender, address(myEvent));
+        return(true, address(myEvent));
+    }
+
+    //Get amount of event contracts created by this factory
+    function getEventCount() public view returns(uint amountOfEventsCreated){
+        return(eventAddresses.length);
+    }
+}
+
+//pragma solidity >=0.4.22 <0.6.0;
+
+contract Door is Ownable{
+
+    //address public owner;
     bool started;
     bool ended;
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, 'you are not the contract owner');
-        _;
-    }
+    //modifier onlyOwner() {
+    //    require(msg.sender == owner, 'you are not the contract owner');
+    //    _;
+    //}
 
     enum TicketValues { None, RSVPD, Attended }
     uint ticketPrice;
@@ -23,7 +61,7 @@ contract Door {
 
     constructor(uint price) public payable {
         ticketPrice = price;
-        owner = msg.sender;
+        //owner = msg.sender;
     }
 
     function startEvent() public onlyOwner {
