@@ -21,7 +21,12 @@
       </div>
     </nav>
 
-    <section class="main-content columns">
+    <section v-if="this.$store.state.error" class="main-content">
+      <b-message title="Danger" type="is-danger">
+        {{ this.$store.state.error }}
+      </b-message>
+    </section>
+    <section v-else class="main-content columns">
       <aside class="column is-2 section">
         <p class="menu-label is-hidden-touch">
           Roles

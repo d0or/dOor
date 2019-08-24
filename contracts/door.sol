@@ -1,13 +1,7 @@
-//EthBerlinZwei Hackathon
-//
-//>>> DOor <<<
-//Everything's decentralized but not your Đoor: Event ticket tokens
-
 pragma solidity ^0.5.0;
 
 import "./ownership.sol";
 import "@openzeppelin/upgrades/contracts/Initializable.sol";
-
 
 contract doorManager is Ownable {
     //Variables
@@ -15,10 +9,8 @@ contract doorManager is Ownable {
     address[] private eventAddresses;
     mapping (address => bool) public eventCreated;
 
-    //Events
     event LogNewEventCreated(address indexed eventOwner, address indexed eventAddress);
 
-    //Create new Event
     function createNewEvent(uint ticketPrice) public returns(bool success,  address newEventAddress){
         myEvent = new Door();
         myEvent.initialize(ticketPrice);
@@ -43,14 +35,8 @@ contract doorManager is Ownable {
 
 contract Door is Ownable, Initializable {
 
-    //address public owner;
     bool started;
     bool ended;
-
-    //modifier onlyOwner() {
-    //    require(msg.sender == owner, 'you are not the contract owner');
-    //    _;
-    //}
 
     enum TicketValues { None, RSVPD, Attended }
     uint ticketPrice;
