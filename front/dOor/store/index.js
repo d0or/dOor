@@ -62,7 +62,7 @@ export const state = () => ({
 
 export const mutations = {
   UPDATE_ACCOUNT (state, data) {
-    const gasPriceInWei = state.web3.utils.toWei(21000, 'ether')
+    const gasPriceInWei = state.web3.utils.toWei(state.gasLimit.toString(), 'ether')
     state.deployedContractManager = state.web3.eth.contract(state.contractAbi).at(state.contractAddress)
     state.account = {
       address: data.address,
