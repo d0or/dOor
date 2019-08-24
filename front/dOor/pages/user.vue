@@ -14,7 +14,7 @@
           <div v-if="event.state === 1">
             <b-button @click="callEvent('cancel', event.address)">Cancel attendence</b-button>
             <b-button @click="showQr(event)">Present challange</b-button>
-            <QrProof :qr-value="events[1].qrValue" :qr-gif-bg-src="events[1].qrGifBgSrc" />
+            <QrProof :qr-value="event.qrValue" :qr-gif-bg-src="event.qrGifBgSrc" />
           </div>
           <div v-if="event.state === 2">
             <b-button @click="callEvent('withdraw', event.address)">Withdraw</b-button>
@@ -25,40 +25,8 @@
           <div v-if="event.state === 4">
             <b-button disabled>Missed event</b-button>
           </div>
-          <!-- <vue-qr :gif-bg-src="event.qrGifBgSrc" :text="event.qrValue" :size="qrSize" /> -->
         </card>
       </div>
-      <!-- <div class="column">
-        <b-collapse class="card" aria-id="contentIdForA11y3">
-          <div
-            slot="trigger"
-            slot-scope="props"
-            class="card-header"
-            role="button"
-            aria-controls="contentIdForA11y3"
-          >
-            <p class="card-header-title">
-              Component
-            </p>
-            <a class="card-header-icon">
-              <b-icon
-                :icon="props.open ? 'menu-down' : 'menu-up'"
-              />
-            </a>
-          </div>
-          <div class="card-content">
-            <div class="content">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.
-              <a>#buefy</a>.
-            </div>
-          </div>
-          <footer class="card-footer">
-            <a class="card-footer-item">Save</a>
-            <a class="card-footer-item">Edit</a>
-            <a class="card-footer-item">Delete</a>
-          </footer>
-        </b-collapse>
-      </div> -->
     </div>
   </section>
 </template>
