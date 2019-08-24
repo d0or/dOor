@@ -20,6 +20,21 @@ contract Door is Ownable, Initializable {
         _;
     }
 
+    modifier hasStarted() {
+        require(started, 'the event has not been started');
+        _;
+    }
+
+    modifier hasNotEnded() {
+        require(!ended, 'the event has already ended');
+        _;
+    }
+
+    modifier hasAttendedTheEvent() {
+        require(tickets[msg.sender]==AttendanceTypes.ATTENDED, 'You have not attended the event');
+        _;
+    }
+
     function initialize(uint256 _price, string memory eventName, bool allowDisposeLeftovers) public initializer payable  {
          ticketPrice = _price;
          nameOfEvent = eventName;
@@ -31,8 +46,7 @@ contract Door is Ownable, Initializable {
         started = true;
     }
 
-    function endEvent() public onlyOwner {
-        require(!ended, 'the event has already ended');
+    function endEvent() public onlyOwner hasNotEnded {
         ended = true;
     }
 
@@ -41,7 +55,6 @@ contract Door is Ownable, Initializable {
     }
 
     function buyEventTicket() public payable hasNoTicket {
-        require(started, 'the event has not been started');
         require(
             msg.value == ticketPrice,
             "Ticket price is too low"
@@ -55,9 +68,8 @@ contract Door is Ownable, Initializable {
         return tickets[msg.sender] == AttendanceTypes.REGISTERED;
     }
 
-    function setUserATTENDED(address payable userAddress) public onlyOwner {
+    function setUserHasAttendedByOwner(address payable userAddress) public onlyOwner hasStarted {
         // assuming that the event creator is honest and will verify correctly
-        require(started, 'the event has not started');
         tickets[userAddress] = AttendanceTypes.ATTENDED;
         attendees.push(userAddress);
     }
@@ -66,11 +78,10 @@ contract Door is Ownable, Initializable {
         return address(this).balance;
     }
 
-    function withdraw() public {
+    function withdraw() public hasAttendedTheEvent {
         require(canWithdrawFunds, 'cannot withdraw funds');
         require(!withdrawals[msg.sender], 'funds already withrdrawn');
         require(ended == true, 'Event has not ended');
-        require(tickets[msg.sender]==AttendanceTypes.ATTENDED, 'You have not attended the event');
 
         uint256 amount = address(this).balance / (registerees.length - attendees.length);
 
