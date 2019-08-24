@@ -6,7 +6,7 @@
       <div v-for="event in events" :key="event.address" class="column is-half">
 
         <event-card :event="event">
-          <b-button @click="buyTicket(event)">Buy ticket</b-button>
+          <b-button @click="buyTicket(event)">Buy ticket ({{ event.price }}) </b-button>
           <b-button @click="showQr(event)">Display challenge</b-button>
         </event-card>
 
@@ -16,8 +16,8 @@
 </template>
 <script>
 /* eslint-disable no-console */
-import DoorFactory from '../../../backend/build/contracts/DoorFactory.json'
-// import Door from '../../../backend/build/contracts/Door.json'
+import DoorFactoryAbi from '../abis/DoorFactory.abi.json'
+import DoorAbi from '../abis/Door.abi.json'
 import EventCard from '~/components/EventCard'
 import QrProof from '~/components/QrProof'
 
@@ -79,23 +79,34 @@ export default {
     },
 
     async getDoors (account) {
-      const doorFactory = new window.$web3.eth.Contract(DoorFactory.abi, '0x3EeD37643788B70328d12e132A69E5A922B2c5c9', {
+      const doorFactory = new window.$web3.eth.Contract(DoorFactoryAbi, '0x3EeD37643788B70328d12e132A69E5A922B2c5c9', {
         from: account,
         gasPrice: '200000000'
       })
+
       console.log('calling')
       const doorCount = await doorFactory.methods.getDoorCount().call()
       const promises = []
       for (let i = 0; i < doorCount; i++) { // omg
         promises.push(doorFactory.methods.getDoorByIndex(i).call())
       }
-      Promise.all(promises).then((doorAdresses) => {
-        this.events = doorAdresses.map(address => ({
-          address,
-          title: 'foo'
-        }))
-        // console.log(doorAdresses)
+      const doorAdresses = await Promise.all(promises)
+      const doorsPromises = doorAdresses.map((doorAddress) => {
+        const doorContract = new window.$web3.eth.Contract(DoorAbi, doorAddress, {
+          from: account,
+          gasPrice: '200000000'
+        })
+        return new Promise((resolve, reject) => {
+          doorContract.methods.getEventPrice().call().then((price) => {
+            resolve({
+              address: doorAddress,
+              title: 'foo',
+              price
+            })
+          }) // wwwwwaaaaah
+        })
       })
+      this.events = await Promise.all(doorsPromises)
     },
 
     async getBalance (account) {
