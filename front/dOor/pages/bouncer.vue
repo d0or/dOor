@@ -2,7 +2,7 @@
   <section class="section">
     <div class="columns is-mobile">
 
-      <card title="Read a qr code">
+      <card title="Read a qr code" icon="door-closed-lock">
         <b-button @click="toggleScan">Scan!</b-button>
         <b-button @click="fakeResult">Fake!</b-button>
         <div v-if="scanning">

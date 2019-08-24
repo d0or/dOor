@@ -14,7 +14,6 @@
           <div v-if="event.state === 1">
             <b-button @click="callEventAction('cancel', event.address)">Cancel attendence</b-button>
             <b-button @click="showQr(event)">Present challange</b-button>
-            <!-- <QrProof :qr-value="event.qrValue" :qr-gif-bg-src="event.qrGifBgSrc" /> -->
           </div>
           <div v-if="event.state === 2">
             <b-button @click="callEventAction('withdraw', event.address)">Withdraw</b-button>
@@ -37,7 +36,6 @@ import QrProof from '~/components/QrProof'
 export default {
   components: {
     Card
-    // QrProof
   },
   data () {
     const userStateMapping = {
@@ -65,6 +63,7 @@ export default {
     callEventAction (eventAddress, action) {
       // make sure account is available
       if (!this.$store.state.account.address) { this.getAccount() }
+      console.log('callEventAction', eventAddress, action)
       this.$store.dispatch(action, eventAddress)
     },
     showQr (event) {
@@ -89,7 +88,6 @@ export default {
               address: accounts[0],
               balance: Number(window.$web3.utils.fromWei(balance)).toFixed(3).toLocaleString()
             }
-
             console.log(data)
             this.$store.dispatch('setAccount', data)
           })
@@ -98,13 +96,11 @@ export default {
           window.ethereum.enable().then((accounts) => {
             window.$web3.eth.getBalance(accounts[0]).then((balance) => {
               const data = {
-                account: accounts[0],
+                address: accounts[0],
                 balance: Number(window.$web3.utils.fromWei(balance)).toFixed(3).toLocaleString()
               }
-
               console.log(data)
-
-              this.$store.state.account.address = data.account
+              this.$store.dispatch('setAccount', data)
             })
           })
         }
