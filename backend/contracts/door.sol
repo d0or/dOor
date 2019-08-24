@@ -9,20 +9,33 @@ contract doorManager is Ownable {
     address[] private eventAddresses;
     mapping (address => bool) public eventCreated;
 
-    event LogNewEventCreated(address indexed eventOwner, address indexed eventAddress);
+    event LogNewEventCreated(address indexed eventOwner, address indexed eventAddress, bytes32 indexed eventName, uint ticketPrice, bool allowDisposeLeftovers);
 
-    function createNewEvent(uint ticketPrice) public returns(bool success,  address newEventAddress){
+    function createNewEvent(bytes32 eventName, uint ticketPrice, bool allowDisposeLeftovers) onlyOwner public returns(bool success,  address newEventAddress){
         myEvent = new Door();
         myEvent.initialize(ticketPrice);
+
+        //Change owner of the child contract
+        myEvent.transferOwnership(msg.sender);
 
         //Append address of the new created event to the event array
         eventAddresses.push(address(myEvent));
 
-        //Confirm creation of event
+        //Hold verification that a new door contract was created by this factory
         eventCreated[address(myEvent)] = true;
 
-        emit LogNewEventCreated(msg.sender, address(myEvent));
+        emit LogNewEventCreated(msg.sender, address(myEvent), eventName, ticketPrice, allowDisposeLeftovers);
         return(true, address(myEvent));
+    }
+
+    //Retrieve the addresses of event contracts created by this factory
+    function getEventAtIndex(uint index) public view returns(address eventAddress){
+        return(eventAddresses[index]);
+    }
+
+    //Get verification that a certain event contract was created by this factory
+    function getEventVerification(address eventAddress) public view returns(bool assertion){
+        return(eventCreated[splitterAddress]);
     }
 
     //Get amount of event contracts created by this factory
