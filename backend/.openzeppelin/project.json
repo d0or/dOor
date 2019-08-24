@@ -1,0 +1,17 @@
+{
+  "manifestVersion": "2.2",
+  "contracts": {
+    "Door": "Door",
+    "Counter": "Counter"
+  },
+  "dependencies": {},
+  "name": "dOor",
+  "version": "1.0.0",
+  "compiler": {
+    "manager": "openzeppelin",
+    "solcVersion": "0.5.11",
+    "compilerSettings": {
+      "optimizer": {}
+    }
+  }
+}

@@ -1,8 +1,10 @@
 pragma solidity ^0.5.0;
 
 import "./ownership.sol";
+import "@openzeppelin/upgrades/contracts/Initializable.sol";
 
-contract doorManager is Ownable{
+contract doorManager is Ownable {
+    //Variables
     Door myEvent;
     address[] private eventAddresses;
     mapping (address => bool) public eventCreated;
@@ -10,7 +12,8 @@ contract doorManager is Ownable{
     event LogNewEventCreated(address indexed eventOwner, address indexed eventAddress);
 
     function createNewEvent(uint ticketPrice) public returns(bool success,  address newEventAddress){
-        myEvent = new Door(ticketPrice);
+        myEvent = new Door();
+        myEvent.initialize(ticketPrice);
 
         //Append address of the new created event to the event array
         eventAddresses.push(address(myEvent));
@@ -28,7 +31,9 @@ contract doorManager is Ownable{
     }
 }
 
-contract Door is Ownable{
+//pragma solidity >=0.4.22 <0.6.0;
+
+contract Door is Ownable, Initializable {
 
     bool started;
     bool ended;
@@ -43,8 +48,9 @@ contract Door is Ownable{
         _;
     }
 
-    constructor(uint price) public payable {
-        ticketPrice = price;
+    function initialize(uint256 _price) public initializer payable  {
+        //owner = msg.sender;
+         ticketPrice = _price;
     }
 
     function startEvent() public onlyOwner {
