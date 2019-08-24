@@ -1,52 +1,20 @@
 <template>
   <div>
-    <nav
-      class="navbar header has-shadow is-primary"
-      role="navigation"
-      aria-label="main navigation"
-    >
-      <div class="navbar-brand">
-        <a
-          class="navbar-item"
-          href="/"
-        >
-          dOor
-        </a>
 
-        <div class="navbar-burger">
-          <span />
-          <span />
-          <span />
-        </div>
-      </div>
-    </nav>
+    <section class="hero is-primary">
+      <d-header />
+    </section>
 
     <section v-if="this.$store.state.error" class="main-content">
       <b-message title="Danger" type="is-danger">
         {{ this.$store.state.error }}
       </b-message>
     </section>
-    <section v-else class="main-content columns">
-      <aside class="column is-2 section">
-        <p class="menu-label is-hidden-touch">
-          Roles
-        </p>
-        <ul class="menu-list">
-          <li
-            v-for="(item, key) of items"
-            :key="key"
-          >
-            <nuxt-link
-              :to="item.to"
-              exact-active-class="is-active"
-            >
-              <b-icon :icon="item.icon" /> {{ item.title }}
-            </nuxt-link>
-          </li>
-        </ul>
-      </aside>
 
-      <div class="container column is-10">
+    <section v-else class="main-content">
+
+      <div class="container">
+        <Roles class="mt-30" />
         <nuxt />
       </div>
     </section>
@@ -54,27 +22,22 @@
 </template>
 
 <script>
+import Roles from '~/components/Roles'
+import Header from '~/components/Header'
 export default {
-  data () {
-    return {
-      items: [
-        {
-          title: 'Event organizer',
-          icon: 'home',
-          to: { name: 'index' }
-        },
-        {
-          title: 'User',
-          icon: 'account',
-          to: { name: 'user' }
-        },
-        {
-          title: 'Bouncer',
-          icon: 'account',
-          to: { name: 'bouncer' }
-        }
-      ]
-    }
+  components: {
+    Roles,
+    dHeader: Header
   }
+
 }
 </script>
+
+<style lang="scss" scoped>
+
+  h1.title {
+    font-family: 'Poppins';
+    font-size: 4em;
+  }
+
+</style>
