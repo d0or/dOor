@@ -2,7 +2,7 @@
   <div class="hero-body">
     <div class="container">
       <ul class="grid">
-        <li v-for="(letter, index) in letters" :key="index" class="ot-letter-left">
+        <li v-for="(letter, index) in letters" :key="index" :class="{ 'ot-letter-left': true, 'is-open': letter.open }">
           <span :data-letter="letter.letter">{{ letter.letter }}</span>
         </li>
       </ul>
@@ -14,6 +14,7 @@
 export default {
   data () {
     return {
+      letterClass: 'ot-letter-left',
       letters: [
         { letter: 'Đ', open: false },
         { letter: 'O', open: false },
@@ -22,18 +23,16 @@ export default {
       ]
     }
   },
+  mounted () {
+    setInterval(() => {
+      const randIdx = Math.floor((Math.random() * this.letters.length))
+      this.letters = this.letters.map((l, idx) => { l.open = (idx === randIdx); return l })
+    }, 500)
+  },
   methods: {
     raise () {
 
     }
-  },
-  mount () {
-    /* setInterval(() => {
-      const randIdx = Math.floor((Math.random() * this.letters.length) + 1)
-      this.letters = this.letters.map((l) => { l.open = false; return l })
-      this.letters
-    }, 1000)
-    */
   }
 }
 </script>
