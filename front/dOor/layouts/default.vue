@@ -64,9 +64,9 @@ export default {
           to: { name: 'user' }
         },
         {
-          title: 'Scanner',
+          title: 'Bouncer',
           icon: 'account',
-          to: { name: 'scan' }
+          to: { name: 'bouncer' }
         }
       ]
     }
