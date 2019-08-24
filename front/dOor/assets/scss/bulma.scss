@@ -1,5 +1,7 @@
 // Import Bulma's core
-@import "~bulma/sass/utilities/_all";
+@import '~bulma/sass/utilities/initial-variables'; 
+@import '~bulma/sass/utilities/functions';
+//@import "~bulma/sass/utilities/_all";
 
 ////////////////////////////////////////////////
 // SUPERHERO
@@ -17,6 +19,7 @@ $blue:         #5bc0de;
 $red:          #d9534f;
 
 $primary: $orange !default;
+$secondary: $yellow; 
 
 $dark: darken($grey-darker, 3);
 
@@ -32,7 +35,7 @@ $footer-background-color: $background;
 
 $border: $grey;
 
-$family-sans-serif: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+$family-sans-serif: 'Poppins', "Helvetica Neue", Helvetica, Arial, sans-serif;
 
 $text: $grey-lighter;
 $text-strong: darken($grey-lighter, 10);
