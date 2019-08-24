@@ -23,7 +23,9 @@ export default {
   ** Global CSS
   */
   css: [
-    'vue-qrcode-reader/dist/vue-qrcode-reader.browser.js'
+
+    'vue-qrcode-reader/dist/vue-qrcode-reader.browser.js',
+    './assets/scss/bulma.scss'
   ],
   /*
   ** Plugins to load before mounting the App
@@ -41,7 +43,9 @@ export default {
   */
   modules: [
     // Doc: https://buefy.github.io/#/documentation
-    'nuxt-buefy'
+    ['nuxt-buefy', {
+      css: false
+    }]
   ],
   /*
   ** Build configuration
