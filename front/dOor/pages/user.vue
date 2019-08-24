@@ -7,7 +7,7 @@
 
         <event-card :event="event">
           <div v-if="event.state === 0">
-            <b-button @click="callEventAction('rsvp', event.address)">RSVP</b-button>
+            <b-button @click="callEventAction('RSVPEvent', event.address)">RSVP</b-button>
           </div>
           <div v-if="event.state === 1">
             <b-button @click="callEventAction('cancel', event.address)">Cancel attendence</b-button>
@@ -58,13 +58,16 @@ export default {
   },
   mounted () {
     if (!this.$store.state.account.address) { this.getAccount() }
+    // TODO: uncomment
+    // await this.$store.dispatch('getEvents')
   },
   methods: {
-    callEventAction (eventAddress, action) {
+    async callEventAction (action, eventAddress) {
       // make sure account is available
       if (!this.$store.state.account.address) { this.getAccount() }
-      console.log('callEventAction', eventAddress, action)
-      this.$store.dispatch(action, eventAddress)
+      console.log('callEventAction', action, eventAddress)
+      await this.$store.dispatch(action, eventAddress)
+      console.log('after')
     },
     showQr (event) {
       console.log('event:', event)
