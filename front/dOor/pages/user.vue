@@ -1,13 +1,11 @@
 <template>
   <section class="section">
     <span>Web3 version: {{ this.$store.state.web3.version }}</span>
-    <div class="columns is-mobile">
+    <div class="columns is-multiline">
       <!-- <div v-for="event in events" :key="event.address" class="column"> -->
-      <div v-for="event in events" :key="event.state" class="column">
-        <card
-          :title="event.name"
-          icon="calendar-check"
-        >
+      <div v-for="event in events" :key="event.address" class="column is-half">
+
+        <event-card :event="event">
           <div v-if="event.state === 0">
             <b-button @click="callEvent('rsvp', event.address)">RSVP</b-button>
           </div>
@@ -25,18 +23,21 @@
           <div v-if="event.state === 4">
             <b-button disabled>Missed event</b-button>
           </div>
-        </card>
+        </event-card>
+
       </div>
     </div>
   </section>
 </template>
 <script>
 /* eslint-disable no-console */
-import Card from '~/components/Card'
+import EventCard from '~/components/EventCard'
 import QrProof from '~/components/QrProof'
+import events from '~/data/events'
+
 export default {
   components: {
-    Card,
+    EventCard,
     QrProof
   },
   data () {
@@ -51,43 +52,7 @@ export default {
     return {
       userStateMapping,
       qrSize: 150,
-      events: [
-        {
-          state: 0,
-          name: '<eventName>',
-          address: '<eventAddress>',
-          qrValue: 'https://ipsum.serveo.net/challange?address=X&signature=Y',
-          qrGifBgSrc: '/img/cat.gif'
-        },
-        {
-          state: 1,
-          name: '<eventName>',
-          address: '<eventAddress>',
-          qrValue: 'https://ipsum.serveo.net/challange?address=X&signature=Y',
-          qrGifBgSrc: '/img/cat.gif'
-        },
-        {
-          state: 2,
-          name: '<eventName>',
-          address: '<eventAddress>',
-          qrValue: 'https://ipsum.serveo.net/challange?address=X&signature=Y',
-          qrGifBgSrc: '/img/cat.gif'
-        },
-        {
-          state: 3,
-          name: '<eventName>',
-          address: '<eventAddress>',
-          qrValue: 'https://ipsum.serveo.net/challange?address=X&signature=Y',
-          qrGifBgSrc: '/img/cat.gif'
-        },
-        {
-          state: 4,
-          name: '<eventName>',
-          address: '<eventAddress>',
-          qrValue: 'https://ipsum.serveo.net/challange?address=X&signature=Y',
-          qrGifBgSrc: '/img/cat.gif'
-        }
-      ]
+      events
     }
   },
   methods: {
