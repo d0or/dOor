@@ -3,7 +3,7 @@ pragma solidity ^0.5.0;
 import "./Ownership.sol";
 import "@openzeppelin/upgrades/contracts/Initializable.sol";
 
-contract DoorFactory is Ownable, Initializable {
+contract DoorFactory is Ownable {
     address[] public doorAddresses;
 
     function createNewDoor(uint256 _price, string memory eventName, bool allowDisposeLeftovers) public returns(address) {
@@ -44,31 +44,6 @@ contract Door is Ownable, Initializable {
     mapping(address => UserStruct) public users;
 
 
-    //mapping(address => AttendanceTypes) public tickets;
-    //address[] public registerees;
-    //address payable[] public attendees;
-    //mapping(address => bool) public withdrawals;
-
-    //modifier hasNoTicket() {
-    //    require(users[msg.sender].ticketStatus == AttendanceTypes.NONE, 'you have no ticket');
-    //    _;
-   // }
-
-    //modifier hasStarted() {
-    //    require(evenetHasStarted, 'the event has not been started');
-    //    _;
-    //}
-
-    //modifier hasNotEnded() {
-     //   require(!eventHasEnded, 'the event has already ended');
-    //    _;
-    //}
-
-    //modifier hasAttendedTheEvent() {
-    //    require(tickets[msg.sender]==AttendanceTypes.ATTENDED, 'You have not attended the event');
-    //    _;
-    //}
-
     function initialize(uint256 _price, string memory eventName, bool allowDisposeLeftovers) public initializer payable  {
          ticketPrice = _price;
          nameOfEvent = eventName;
@@ -99,7 +74,6 @@ contract Door is Ownable, Initializable {
         );
 
         users[msg.sender].ticketStatus = AttendanceTypes.REGISTERED;
-        //registerees.push(msg.sender);
     }
 
     function userHasEventTicket() public view returns (bool indeed) {
@@ -123,10 +97,8 @@ contract Door is Ownable, Initializable {
         require(users[msg.sender].ticketStatus == AttendanceTypes.ATTENDED, 'User didnt attend.');
         require(users[msg.sender].hasWithdrawn, 'Users funds are already withdrawn.');
 
-        uint256 amount = address(this).balance / (registerees.length - attendees.length);
-
         users[msg.sender].hasWithdrawn = true;
 
-        msg.sender.transfer(amount);
+        msg.sender.transfer(shares);
     }
 }
