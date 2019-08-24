@@ -1,12 +1,23 @@
 <template>
   <section class="section">
-    <b-button @click="getAccount2">{{ test }}</b-button>
-    <span>Web3 version: {{ this.$store.state.web3.version }}</span>
+    <div class="columns is-mobile">
+      <card
+        title="Buy ticket"
+        icon="calendar-check"
+      >
+        <b-button @click="getAccount2">{{ test }}</b-button>
+      </card>
+    </div>
+    <!-- <span>Web3 version: {{ this.$store.state.web3.version }}</span> -->
   </section>
 </template>
 <script>
 /* eslint-disable no-console */
+import Card from '~/components/Card'
 export default {
+  components: {
+    Card
+  },
   data () {
     return {
       test: 'RSVP'
