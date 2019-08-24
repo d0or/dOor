@@ -1,22 +1,14 @@
-//EthBerlinZwei Hackathon
-//
-//>>> DOor <<<
-//Everything's decentralized but not your Đoor: Event ticket tokens
-
 pragma solidity ^0.5.0;
 
 import "./ownership.sol";
 
 contract doorManager is Ownable{
-    //Variables
     Door myEvent;
     address[] private eventAddresses;
     mapping (address => bool) public eventCreated;
 
-    //Events
     event LogNewEventCreated(address indexed eventOwner, address indexed eventAddress);
 
-    //Create new Event
     function createNewEvent(uint ticketPrice) public returns(bool success,  address newEventAddress){
         myEvent = new Door(ticketPrice);
 
@@ -36,18 +28,10 @@ contract doorManager is Ownable{
     }
 }
 
-//pragma solidity >=0.4.22 <0.6.0;
-
 contract Door is Ownable{
 
-    //address public owner;
     bool started;
     bool ended;
-
-    //modifier onlyOwner() {
-    //    require(msg.sender == owner, 'you are not the contract owner');
-    //    _;
-    //}
 
     enum TicketValues { None, RSVPD, Attended }
     uint ticketPrice;
@@ -61,7 +45,6 @@ contract Door is Ownable{
 
     constructor(uint price) public payable {
         ticketPrice = price;
-        //owner = msg.sender;
     }
 
     function startEvent() public onlyOwner {
