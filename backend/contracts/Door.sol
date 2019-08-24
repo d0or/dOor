@@ -3,6 +3,27 @@ pragma solidity ^0.5.0;
 import "./Ownership.sol";
 import "../node_modules/@openzeppelin/upgrades/contracts/Initializable.sol";
 
+contract DoorFactory is Ownable {
+    address[] public doorAddresses;
+
+    function createNewDoor(uint256 _price, string memory eventName, bool allowDisposeLeftovers) public returns(address) {
+        Door door = new Door();
+        door.initialize(_price, eventName, allowDisposeLeftovers);
+        door.transferOwnership(msg.sender);
+        doorAddresses.push(address(door));
+        return address(door);
+    }
+
+    function getDoorCount() public view returns(uint) {
+        return doorAddresses.length;
+    }
+
+    function getDoorByIndex(uint index) public view returns(address) {
+        return address(doorAddresses[index]);
+    }
+
+}
+
 contract Door is Ownable, Initializable {
 
     bool started;

@@ -1,7 +1,8 @@
 {
   "manifestVersion": "2.2",
   "contracts": {
-    "Door": "Door"
+    "Door": "Door",
+    "DoorFactory": "DoorFactory"
   },
   "dependencies": {},
   "name": "dOor",
