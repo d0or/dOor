@@ -1,6 +1,7 @@
 <template>
   <section class="section">
     <b-button @click="getAccount2">{{ test }}</b-button>
+    <span>Web3 version: {{ this.$store.state.web3.version }}</span>
   </section>
 </template>
 <script>
@@ -18,12 +19,12 @@ export default {
           // just get the account address and balance
           window.$web3.eth.getBalance(accounts[0]).then((balance) => {
             const data = {
-              account: accounts[0],
+              address: accounts[0],
               balance: Number(window.$web3.utils.fromWei(balance)).toFixed(3).toLocaleString()
             }
 
             console.log(data)
-
+            this.$store.dispatch('setAccount', data)
             this.$store.state.account.address = data.account
           })
         } else if (window.ethereum) {

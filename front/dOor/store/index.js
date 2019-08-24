@@ -8,23 +8,25 @@ export const plugins = []
 export const state = () => ({
   account: {
     address: null,
-    nonce: null,
-    signature: null
+    balance: null
+    // signature: null
   },
   data: null
 })
 
 export const mutations = {
-  setAccount (state, { data }) {
+  UPDATE_ACCOUNT (state, data) {
     state.account = {
       address: data.address,
-      nonce: data.nonce,
-      signature: data.signature
+      balance: data.balance
     }
   }
 }
 
 export const actions = {
+  setAccount ({ commit }, data) {
+    commit('UPDATE_ACCOUNT', data)
+  }
   // nuxtServerInit({commit}, {req}) {
   //     let auth = null;
   //     if (req.headers.cookie) {
