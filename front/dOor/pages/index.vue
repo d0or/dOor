@@ -2,39 +2,31 @@
   <section class="section">
     <div class="columns is-mobile">
       <card
-        title="Free"
-        icon="github-circle"
+        title="Setup an event"
+        icon="home"
       >
-        Open source on <a href="https://github.com/buefy/buefy">
-          GitHub
-        </a>
+        Functions and inputs here
       </card>
 
       <card
-        title="Responsive"
-        icon="cellphone-link"
+        title="Mark event as started"
+        icon="reload"
       >
-        <b class="has-text-grey">
-          Every
-        </b> component is responsive
+        <b-button>Start event</b-button>
       </card>
 
       <card
-        title="Modern"
-        icon="alert-decagram"
+        title="Mark event as finished"
+        icon="check-outline"
       >
-        Built with <a href="https://vuejs.org/">
-          Vue.js
-        </a> and <a href="http://bulma.io/">
-          Bulma
-        </a>
+        <b-button>End event</b-button>
       </card>
 
       <card
-        title="Lightweight"
-        icon="arrange-bring-to-front"
+        title="Send remaining funds"
+        icon="send"
       >
-        No other internal dependency
+        <b-button>Send leftover money</b-button>
       </card>
     </div>
   </section>
