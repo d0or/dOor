@@ -2,7 +2,7 @@
 /* eslint-disable no-new */
 import Web3 from 'web3'
 
-export default async ({ store }) => {
+export default ({ store }) => {
   if (process.client) {
     let instance
     try {
@@ -11,11 +11,7 @@ export default async ({ store }) => {
       try {
         instance = new Web3(Web3.givenProvider)
       } catch (e) {
-        try {
-          await new Web3.providers.HttpProvider(`https://mainnet.infura.io/`)
-        } catch (e) {
-          console.log('No Metamask detected!')
-        }
+        console.log('No Metamask detected!')
       }
     }
 

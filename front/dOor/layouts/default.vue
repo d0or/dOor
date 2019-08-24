@@ -59,6 +59,11 @@ export default {
           to: { name: 'index' }
         },
         {
+          title: 'User',
+          icon: 'account',
+          to: { name: 'user' }
+        },
+        {
           title: 'Bouncer',
           icon: 'account',
           to: { name: 'bouncer' }
