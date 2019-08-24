@@ -56,7 +56,7 @@ contract Door is Ownable, Initializable {
     }
 
     function endEvent() public onlyOwner {
-        require(!eventHasEnded && EventHasStarted, 'The event has already ended or hasnt started yet.');
+        require(!eventHasEnded && eventHasStarted, 'The event has already ended or hasnt started yet.');
         eventHasEnded = true;
 
         shares = address(this).balance / attendeesCount;
@@ -77,13 +77,13 @@ contract Door is Ownable, Initializable {
     }
 
     function userHasEventTicket() public view returns (bool indeed) {
-        return tickets[msg.sender] == AttendanceTypes.REGISTERED;
+        return user[msg.sender].ticketStatus == AttendanceTypes.REGISTERED;
     }
 
     function setUserHasAttendedByOwner(address payable userAddress) public onlyOwner{
         // assuming that the event creator is honest and will verify correctly
         require(eventHasStarted, 'The event has not been started yet.');
-        user[userAddress].ticketStatus = AttendanceTypes.ATTENDED;
+        users[userAddress].ticketStatus = AttendanceTypes.ATTENDED;
         attendeesCount++;
     }
 
