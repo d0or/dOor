@@ -6,21 +6,30 @@
         title="Buy ticket"
         icon="calendar-check"
       >
-        <b-button @click="getAccount2">{{ test }}</b-button>
+        <b-button @click="getAccount2">{{ buttonText }}</b-button>
       </card>
     </div>
+    <vue-qr :gif-bg-src="gifBgSrc" :text="qrValue" :size="qrSize" />
   </section>
 </template>
 <script>
 /* eslint-disable no-console */
+import VueQr from 'vue-qr'
 import Card from '~/components/Card'
 export default {
   components: {
-    Card
+    Card,
+    VueQr
   },
   data () {
     return {
-      test: 'RSVP'
+      buttonText: 'RSVP',
+      gifBgSrc: '/img/cat.gif',
+      qrSize: 300,
+      qrValue: {
+        publicAddress: '0xAC70DbA396847b433D3b889B3f798f21C0B024d4',
+        messageSignature: 'abcder'
+      }
     }
   },
   methods: {
