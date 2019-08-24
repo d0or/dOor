@@ -1,0 +1,288 @@
+{
+  "contracts": {
+    "DoorFactory": {
+      "address": "0x93e4fAA88E3c9db4e6b3ff63f9E0fF0C5F666675",
+      "constructorCode": "60806040525b33600060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550600060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16600073ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a35b6100c9565b6122e7806100d86000396000f3fe",
+      "bodyBytecodeHash": "3005cd64025bd8102be70069db1a84c464232424a2e976cf6a4bba3a8fabfef3",
+      "localBytecodeHash": "2feb08c11089e4f360130c6d34d0b22d8a38e407ac0bb8c30a22742a8af9a00d",
+      "deployedBytecodeHash": "2feb08c11089e4f360130c6d34d0b22d8a38e407ac0bb8c30a22742a8af9a00d",
+      "types": {
+        "t_address": {
+          "id": "t_address",
+          "kind": "elementary",
+          "label": "address"
+        },
+        "t_array:dyn<t_address>": {
+          "id": "t_array:dyn<t_address>",
+          "valueType": "t_address",
+          "length": "dyn",
+          "kind": "array",
+          "label": "address[]"
+        }
+      },
+      "storage": [
+        {
+          "contract": "Ownable",
+          "path": "contracts/Ownership.sol",
+          "label": "_owner",
+          "astId": 368,
+          "type": "t_address",
+          "src": "471:22:2"
+        },
+        {
+          "contract": "DoorFactory",
+          "path": "contracts/Door.sol",
+          "label": "doorAddresses",
+          "astId": 20,
+          "type": "t_array:dyn<t_address>",
+          "src": "167:30:1"
+        }
+      ],
+      "warnings": {
+        "hasConstructor": false,
+        "hasSelfDestruct": false,
+        "hasDelegateCall": false,
+        "hasInitialValuesInDeclarations": false,
+        "uninitializedBaseContracts": []
+      }
+    },
+    "Door": {
+      "address": "0xE63489ff7443c4cA4EC0f9Db747Bf383Ab1bad75",
+      "constructorCode": "60806040525b33600060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550600060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16600073ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a35b6100c9565b6117bb806100d86000396000f3fe",
+      "bodyBytecodeHash": "9ab5834d87c68a8492b6340b20b427c6b9f7190a1a0c6671dffd484e82320109",
+      "localBytecodeHash": "5c21f55c78d8d1b330589266923c57b9a6c74876c449f408310be81c78139a1a",
+      "deployedBytecodeHash": "5c21f55c78d8d1b330589266923c57b9a6c74876c449f408310be81c78139a1a",
+      "types": {
+        "t_address": {
+          "id": "t_address",
+          "kind": "elementary",
+          "label": "address"
+        },
+        "t_bool": {
+          "id": "t_bool",
+          "kind": "elementary",
+          "label": "bool"
+        },
+        "t_uint256": {
+          "id": "t_uint256",
+          "kind": "elementary",
+          "label": "uint256"
+        },
+        "t_array:50<t_uint256>": {
+          "id": "t_array:50<t_uint256>",
+          "valueType": "t_uint256",
+          "length": "50",
+          "kind": "array",
+          "label": "uint256[50]"
+        },
+        "t_enum<Door.AttendanceTypes>": {
+          "id": "t_enum<Door.AttendanceTypes>",
+          "kind": "enum",
+          "label": "Door.AttendanceTypes",
+          "members": [
+            "NONE",
+            "REGISTERED",
+            "ATTENDED"
+          ]
+        },
+        "t_mapping<t_enum<Door.AttendanceTypes>>": {
+          "id": "t_mapping<t_enum<Door.AttendanceTypes>>",
+          "valueType": "t_enum<Door.AttendanceTypes>",
+          "label": "mapping(key => Door.AttendanceTypes)",
+          "kind": "mapping"
+        },
+        "t_array:dyn<t_address>": {
+          "id": "t_array:dyn<t_address>",
+          "valueType": "t_address",
+          "length": "dyn",
+          "kind": "array",
+          "label": "address[]"
+        },
+        "t_address_payable": {
+          "id": "t_address_payable",
+          "kind": "elementary",
+          "label": "address payable"
+        },
+        "t_array:dyn<t_address_payable>": {
+          "id": "t_array:dyn<t_address_payable>",
+          "valueType": "t_address_payable",
+          "length": "dyn",
+          "kind": "array",
+          "label": "address payable[]"
+        },
+        "t_mapping<t_bool>": {
+          "id": "t_mapping<t_bool>",
+          "valueType": "t_bool",
+          "label": "mapping(key => bool)",
+          "kind": "mapping"
+        },
+        "t_string": {
+          "id": "t_string",
+          "kind": "elementary",
+          "label": "string"
+        }
+      },
+      "storage": [
+        {
+          "contract": "Ownable",
+          "path": "contracts/Ownership.sol",
+          "label": "_owner",
+          "astId": 368,
+          "type": "t_address",
+          "src": "471:22:2"
+        },
+        {
+          "contract": "Initializable",
+          "path": "node_modules/@openzeppelin/upgrades/contracts/Initializable.sol",
+          "label": "initialized",
+          "astId": 479,
+          "type": "t_bool",
+          "src": "757:24:3"
+        },
+        {
+          "contract": "Initializable",
+          "path": "node_modules/@openzeppelin/upgrades/contracts/Initializable.sol",
+          "label": "initializing",
+          "astId": 481,
+          "type": "t_bool",
+          "src": "876:25:3"
+        },
+        {
+          "contract": "Initializable",
+          "path": "node_modules/@openzeppelin/upgrades/contracts/Initializable.sol",
+          "label": "______gap",
+          "astId": 537,
+          "type": "t_array:50<t_uint256>",
+          "src": "1951:29:3"
+        },
+        {
+          "contract": "Door",
+          "path": "contracts/Door.sol",
+          "label": "started",
+          "astId": 95,
+          "type": "t_bool",
+          "src": "819:12:1"
+        },
+        {
+          "contract": "Door",
+          "path": "contracts/Door.sol",
+          "label": "ended",
+          "astId": 97,
+          "type": "t_bool",
+          "src": "837:10:1"
+        },
+        {
+          "contract": "Door",
+          "path": "contracts/Door.sol",
+          "label": "ticketPrice",
+          "astId": 103,
+          "type": "t_uint256",
+          "src": "910:16:1"
+        },
+        {
+          "contract": "Door",
+          "path": "contracts/Door.sol",
+          "label": "tickets",
+          "astId": 107,
+          "type": "t_mapping<t_enum<Door.AttendanceTypes>>",
+          "src": "932:50:1"
+        },
+        {
+          "contract": "Door",
+          "path": "contracts/Door.sol",
+          "label": "registerees",
+          "astId": 110,
+          "type": "t_array:dyn<t_address>",
+          "src": "988:28:1"
+        },
+        {
+          "contract": "Door",
+          "path": "contracts/Door.sol",
+          "label": "attendees",
+          "astId": 113,
+          "type": "t_array:dyn<t_address_payable>",
+          "src": "1022:34:1"
+        },
+        {
+          "contract": "Door",
+          "path": "contracts/Door.sol",
+          "label": "withdrawals",
+          "astId": 117,
+          "type": "t_mapping<t_bool>",
+          "src": "1062:43:1"
+        },
+        {
+          "contract": "Door",
+          "path": "contracts/Door.sol",
+          "label": "nameOfEvent",
+          "astId": 361,
+          "type": "t_string",
+          "src": "3359:18:1"
+        },
+        {
+          "contract": "Door",
+          "path": "contracts/Door.sol",
+          "label": "canWithdrawFunds",
+          "astId": 363,
+          "type": "t_bool",
+          "src": "3383:21:1"
+        }
+      ],
+      "warnings": {
+        "hasConstructor": false,
+        "hasSelfDestruct": false,
+        "hasDelegateCall": false,
+        "hasInitialValuesInDeclarations": false,
+        "uninitializedBaseContracts": []
+      }
+    },
+    "Counter": {
+      "address": "0x21A0f7ab7bA5ACf758133d1D41EfE20cAFB40f11",
+      "constructorCode": "60806040523480156100115760006000fd5b50610017565b60b7806100256000396000f3fe",
+      "bodyBytecodeHash": "0e498d1320a608e305ac84dfd1128549ef402c2361a5e5ec9365f7a8172c3846",
+      "localBytecodeHash": "d5e234710d74d0a2d11862b9a39d5f9cfc4ee82f01714b0c70d15b4d583f9e17",
+      "deployedBytecodeHash": "d5e234710d74d0a2d11862b9a39d5f9cfc4ee82f01714b0c70d15b4d583f9e17",
+      "types": {
+        "t_uint256": {
+          "id": "t_uint256",
+          "kind": "elementary",
+          "label": "uint256"
+        }
+      },
+      "storage": [
+        {
+          "contract": "Counter",
+          "path": "contracts/Counter.sol",
+          "label": "value",
+          "astId": 3,
+          "type": "t_uint256",
+          "src": "46:20:0"
+        }
+      ],
+      "warnings": {
+        "hasConstructor": false,
+        "hasSelfDestruct": false,
+        "hasDelegateCall": false,
+        "hasInitialValuesInDeclarations": false,
+        "uninitializedBaseContracts": []
+      }
+    }
+  },
+  "solidityLibs": {},
+  "proxies": {
+    "dOor/DoorFactory": [
+      {
+        "address": "0x3EeD37643788B70328d12e132A69E5A922B2c5c9",
+        "version": "1.0.0",
+        "implementation": "0x93e4fAA88E3c9db4e6b3ff63f9E0fF0C5F666675",
+        "admin": "0x6d96aAE79399C6f2630d585BBb0FCF31cCa88fa9",
+        "kind": "Upgradeable"
+      }
+    ]
+  },
+  "manifestVersion": "2.2",
+  "version": "1.0.0",
+  "proxyAdmin": {
+    "address": "0x6d96aAE79399C6f2630d585BBb0FCF31cCa88fa9"
+  }
+}
