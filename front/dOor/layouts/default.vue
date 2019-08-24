@@ -59,9 +59,9 @@ export default {
           to: { name: 'index' }
         },
         {
-          title: 'Scanner',
+          title: 'Bouncer',
           icon: 'account',
-          to: { name: 'scan' }
+          to: { name: 'bouncer' }
         }
       ]
     }
