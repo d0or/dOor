@@ -40,6 +40,7 @@ export default {
 
   methods: {
     onDecode (result) {
+      console.log('result', result)
       this.result = result
     },
     fakeResult () {

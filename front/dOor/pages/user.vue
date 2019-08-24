@@ -26,10 +26,7 @@ export default {
       buttonText: 'RSVP',
       gifBgSrc: '/img/cat.gif',
       qrSize: 300,
-      qrValue: {
-        publicAddress: '0xAC70DbA396847b433D3b889B3f798f21C0B024d4',
-        messageSignature: 'abcder'
-      }
+      qrValue: 'https://ipsum.serveo.net/challange?address=X&signature=Y'
     }
   },
   methods: {
@@ -45,7 +42,7 @@ export default {
 
             console.log(data)
             this.$store.dispatch('setAccount', data)
-            this.$store.state.account.address = data.account
+            // this.$store.state.account.address = data.account
           })
         } else if (window.ethereum) {
         // privacy mode on
