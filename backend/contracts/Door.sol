@@ -3,14 +3,30 @@ pragma solidity ^0.5.0;
 import "./Ownership.sol";
 import "@openzeppelin/upgrades/contracts/Initializable.sol";
 
-contract DoorFactory is Ownable {
+contract DoorFactory {
     address[] public doorAddresses;
+
+    event NewDoorCreated(
+        address indexed doorOwner,
+        address indexed doorAddress,
+        string indexed doorName,
+        uint ticketPrice,
+        bool allowDisposeLeftovers
+    );
 
     function createNewDoor(uint256 _price, string memory eventName, bool allowDisposeLeftovers) public returns(address) {
         Door door = new Door();
         door.initialize(_price, eventName, allowDisposeLeftovers);
         door.transferOwnership(msg.sender);
         doorAddresses.push(address(door));
+
+        emit NewDoorCreated(
+            msg.sender,
+            address(door),
+            eventName,
+            _price,
+            allowDisposeLeftovers
+        );
         return address(door);
     }
 
@@ -48,6 +64,7 @@ contract Door is Ownable, Initializable {
          ticketPrice = _price;
          nameOfEvent = eventName;
          canWithdrawFunds = allowDisposeLeftovers;
+         _owner = msg.sender;
     }
 
     function startEvent() public onlyOwner {
@@ -83,7 +100,7 @@ contract Door is Ownable, Initializable {
     function setUserHasAttendedByOwner(address payable userAddress) public onlyOwner{
         // assuming that the event creator is honest and will verify correctly
         require(eventHasStarted, 'The event has not been started yet.');
-        require(users[userAddress].ticketStatus != AttendanceTypes.ATTENDED, 'User has already attended.')
+        require(users[userAddress].ticketStatus != AttendanceTypes.ATTENDED, 'User has already attended.');
         users[userAddress].ticketStatus = AttendanceTypes.ATTENDED;
         attendeesCount++;
     }
