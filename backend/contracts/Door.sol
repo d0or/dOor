@@ -64,7 +64,6 @@ contract Door is Ownable, Initializable {
          ticketPrice = _price;
          nameOfEvent = eventName;
          canWithdrawFunds = allowDisposeLeftovers;
-         _owner = msg.sender;
     }
 
     function startEvent() public onlyOwner {
