@@ -36,8 +36,7 @@ import events from '~/data/events'
 
 export default {
   components: {
-    EventCard,
-    QrProof
+    EventCard
   },
   data () {
     const userStateMapping = {
