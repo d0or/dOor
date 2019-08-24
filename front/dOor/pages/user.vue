@@ -1,13 +1,11 @@
 <template>
   <section class="section">
     <span>Web3 version: {{ this.$store.state.web3.version }}</span>
-    <div class="columns is-mobile">
+    <div class="columns is-multiline">
       <!-- <div v-for="event in events" :key="event.address" class="column"> -->
-      <div v-for="event in events" :key="event.state" class="column">
-        <card
-          :title="event.name"
-          icon="calendar-check"
-        >
+      <div v-for="event in events" :key="event.address" class="column is-half">
+
+        <event-card :event="event">
           <div v-if="event.state === 0">
             <b-button @click="callEventAction('rsvp', event.address)">RSVP</b-button>
           </div>
@@ -24,18 +22,20 @@
           <div v-if="event.state === 4">
             <b-button disabled>Missed event</b-button>
           </div>
-        </card>
+        </event-card>
+
       </div>
     </div>
   </section>
 </template>
 <script>
 /* eslint-disable no-console */
-import Card from '~/components/Card'
+import EventCard from '~/components/EventCard'
 import QrProof from '~/components/QrProof'
+
 export default {
   components: {
-    Card
+    EventCard
   },
   data () {
     const userStateMapping = {
@@ -48,7 +48,7 @@ export default {
 
     return {
       userStateMapping,
-      isComponentModalActive: false
+      qrSize: 150
     }
   },
   computed: {
