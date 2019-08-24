@@ -9,12 +9,9 @@ contract doorManager is Ownable {
     address[] private eventAddresses;
     mapping (address => bool) public eventCreated;
 
-    event LogNewEventCreated(address indexed eventOwner, address indexed eventAddress);
+    event LogNewEventCreated(address indexed eventOwner, address indexed eventAddress, bytes32 indexed eventName, uint ticketPrice, bool allowDisposeLeftovers);
 
-    //more event characteristics: name, ticket price, leftovers
-    function createNewEvent(uint ticketPrice) onlyOwner public returns(bool success,  address newEventAddress){
-        require(ticketPrice != 0);
-
+    function createNewEvent(bytes32 eventName, uint ticketPrice, bool allowDisposeLeftovers) onlyOwner public returns(bool success,  address newEventAddress){
         myEvent = new Door();
         myEvent.initialize(ticketPrice);
 
@@ -27,7 +24,7 @@ contract doorManager is Ownable {
         //Hold verification that a new door contract was created by this factory
         eventCreated[address(myEvent)] = true;
 
-        emit LogNewEventCreated(msg.sender, address(myEvent));
+        emit LogNewEventCreated(msg.sender, address(myEvent), eventName, ticketPrice, allowDisposeLeftovers);
         return(true, address(myEvent));
     }
 
