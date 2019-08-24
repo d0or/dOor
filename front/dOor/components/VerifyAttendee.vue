@@ -2,7 +2,7 @@
   <div>
     {{ scanResult.publicAddress }}
     the balance is: {{ balance }}
-    <b-button @click="verify">verify!</b-button>
+    <b-button @click="signAndVerify">verify!</b-button>
   </div>
 </template>
 
@@ -24,7 +24,21 @@ export default {
     }
   },
   methods: {
-    async verify () {
+    async signAndVerify () {
+      const signature = await this.sign()
+      console.log(`signature is ${signature}`)
+      const signedbyAddress = await this.verify(signature)
+      console.log(`signed by ${signedbyAddress}`)
+    },
+
+    verify (signature) {
+      const web3 = window.$web3
+      const secretMessage = 'BatMan!'
+      const address = web3.eth.personal.ecRecover(secretMessage, signature)
+      return address
+    },
+
+    async sign () {
       const web3 = window.$web3
 
       const secretMessage = 'BatMan!'
@@ -36,7 +50,7 @@ export default {
       // console.log(msgHex)
       try {
         const signature = await web3.eth.personal.sign(secretMessage, fstAccount)
-        console.log(signature)
+        return signature
       } catch (e) {
         console.error(e)
       }
