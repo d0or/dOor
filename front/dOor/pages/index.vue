@@ -1,6 +1,6 @@
 <template>
   <section class="section">
-    <div class="columns is-mobile">
+    <div class="columns">
       <card
         title="Setup an event"
         icon="home"

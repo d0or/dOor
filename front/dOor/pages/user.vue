@@ -1,5 +1,6 @@
 <template>
   <section class="section">
+    <span>Web3 version: {{ this.$store.state.web3.version }}</span>
     <div class="columns is-mobile">
       <card
         title="Buy ticket"
@@ -8,7 +9,6 @@
         <b-button @click="getAccount2">{{ test }}</b-button>
       </card>
     </div>
-    <!-- <span>Web3 version: {{ this.$store.state.web3.version }}</span> -->
   </section>
 </template>
 <script>

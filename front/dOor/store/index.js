@@ -11,7 +11,8 @@ export const state = () => ({
     balance: null
     // signature: null
   },
-  data: null
+  data: null,
+  error: null
 })
 
 export const mutations = {
