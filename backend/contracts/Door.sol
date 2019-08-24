@@ -76,18 +76,19 @@ contract Door is Ownable, Initializable {
         users[msg.sender].ticketStatus = AttendanceTypes.REGISTERED;
     }
 
-    function userHasEventTicket() public view returns (bool indeed) {
+    function userHasEventTicket() public view returns (bool) {
         return users[msg.sender].ticketStatus == AttendanceTypes.REGISTERED;
     }
 
     function setUserHasAttendedByOwner(address payable userAddress) public onlyOwner{
         // assuming that the event creator is honest and will verify correctly
         require(eventHasStarted, 'The event has not been started yet.');
+        require(users[userAddress].ticketStatus != AttendanceTypes.ATTENDED, 'User has already attended.')
         users[userAddress].ticketStatus = AttendanceTypes.ATTENDED;
         attendeesCount++;
     }
 
-    function getEventBalance() public view returns (uint256 balance){
+    function getEventBalance() public view returns (uint256 eventBalance){
         return address(this).balance;
     }
 
