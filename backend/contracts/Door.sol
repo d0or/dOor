@@ -37,6 +37,10 @@ contract DoorFactory {
     function getDoorByIndex(uint index) public view returns(address) {
         return address(doorAddresses[index]);
     }
+
+    function getAllDoors() public view returns(address[] memory) {
+        return doorAddresses;
+    }
 }
 
 contract Door is Ownable, Initializable {
