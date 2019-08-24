@@ -118,4 +118,9 @@ contract Door is Ownable, Initializable {
 
         msg.sender.transfer(shares);
     }
+
+    function getEventName() public view returns (string name) {
+        return nameOfEvent;
+    }
+
 }
