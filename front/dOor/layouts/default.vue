@@ -16,7 +16,7 @@
         <nuxt />
       </div>
     </section>
-    </section></div>
+  </div>
 </template>
 
 <script>
