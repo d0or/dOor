@@ -32,7 +32,6 @@
 /* eslint-disable no-console */
 import EventCard from '~/components/EventCard'
 import QrProof from '~/components/QrProof'
-import events from '~/data/events'
 
 export default {
   components: {
@@ -49,8 +48,12 @@ export default {
 
     return {
       userStateMapping,
-      qrSize: 150,
-      events
+      qrSize: 150
+    }
+  },
+  computed: {
+    events () {
+      return this.$store.getters.events
     }
   },
   mounted () {

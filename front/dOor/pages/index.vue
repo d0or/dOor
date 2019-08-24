@@ -27,7 +27,6 @@
 
 import CreateEvent from '~/components/CreateEvent'
 import EventCard from '~/components/EventCard'
-import events from '~/data/events'
 
 export default {
   name: 'HomePage',
@@ -37,7 +36,11 @@ export default {
   },
   data () {
     return {
-      events
+    }
+  },
+  computed: {
+    events () {
+      return this.$store.getters.events
     }
   },
   methods: {
