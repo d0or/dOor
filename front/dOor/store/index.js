@@ -1,4 +1,7 @@
-// import web3 from '../plugins/web3';
+/* eslint-disable no-unused-vars */
+/* eslint-disable handle-callback-err */
+/* eslint-disable no-console */
+import web3 from '../plugins/web3'
 // const cookieparser = process.server ? require('cookieparser') : undefined;
 
 export const strict = false
@@ -6,12 +9,18 @@ export const strict = false
 export const plugins = []
 
 export const state = () => ({
+  web3: null,
+  gasLimit: 21000,
+  gasPriceInWei: null,
+  contractAbi: '',
+  deployedContractManager: null,
   account: {
     address: null,
     balance: null
     // signature: null
   },
   error: null,
+  transactionObject: null,
   events: [
     {
       state: 0,
@@ -53,9 +62,16 @@ export const state = () => ({
 
 export const mutations = {
   UPDATE_ACCOUNT (state, data) {
+    const gasPriceInWei = state.web3.utils.toWei(21000, 'ether')
+    state.deployedContractManager = state.web3.eth.contract(state.contractAbi).at(state.contractAddress)
     state.account = {
       address: data.address,
       balance: data.balance
+    }
+    state.transactionObject = {
+      from: data.address,
+      gas: state.gasLimit,
+      gasPrice: gasPriceInWei
     }
   },
   UPDATE_EVENTS (state, events) {
@@ -67,26 +83,43 @@ export const actions = {
   setAccount ({ commit }, data) {
     commit('UPDATE_ACCOUNT', data)
   },
-  async getEvents ({ commit }) {
+  async getEvents ({ commit, state }) {
     const events = []
-    const eventCount = await window.$web3.contract.at('').getEventCount()
-    for (let i = 0; i < eventCount; i++) {
-      const temp = await window.$web3.contract.at('').getEventAtIndex(i)
-      events.push(await window.$web3.contract.at(`${temp}`).toString())
-    }
-    commit('UPDATE_EVENTS', events)
+    await state.deployedContractManager.events.call({ from: state.account.address }, async function (err, result) {
+      console.log('getEvents', result)
+      const eventCount = result.length
+      for (let i = 0; i < eventCount; i++) {
+        const temp = await state.deployedContractManager.getEventAtAddress(result[i])
+        // TODO: How to get the toString() of the child event contract without knowing its ABI?
+        // events.push(await window.$web3.contract.at(`${temp}`).toString())
+      }
+      commit('UPDATE_EVENTS', events)
+    })
   },
-  async startEvent (eventAddress) {
-    await window.$web3.contract.at('').startEvent(eventAddress)
+  async startEvent ({ state }, eventAddress) {
+    await state.deployedContractManager.sendTransaction('startEvent', state.transactionObject, (err, result) => { // do something with error checking/result here });
+      console.log('startEvent', result)
+    })
   },
-  async endEvent (eventAddress) {
-    await window.$web3.contract.at('').endEvent(eventAddress)
+  async RSVPEvent ({ state }, eventAddress) {
+    await state.deployedContractManager.sendTransaction('RSVPEvent', state.transactionObject, (err, result) => { // do something with error checking/result here });
+      console.log('RSVPEvent', result)
+    })
   },
-  async withdrawStakes (eventAddress) {
-    await window.$web3.contract.at('').withdrawStakes(eventAddress)
+  async endEvent ({ commit }, eventAddress) {
+    await state.deployedContractManager.sendTransaction('endEvent', state.transactionObject, (err, result) => { // do something with error checking/result here });
+      console.log('endEvent', result)
+    })
   },
-  async cancelRSVP (eventAddress) {
-    await window.$web3.contract.at('').cancelRSVP(eventAddress)
+  async withdrawStakes ({ commit }, eventAddress) {
+    await state.deployedContractManager.sendTransaction('withdrawStakes', state.transactionObject, (err, result) => { // do something with error checking/result here });
+      console.log('withdrawStakes', result)
+    })
+  },
+  async cancelRSVP ({ commit }, eventAddress) {
+    await state.deployedContractManager.sendTransaction('cancelRSVP', state.transactionObject, (err, result) => { // do something with error checking/result here });
+      console.log('cancelRSVP', result)
+    })
   }
 }
 
