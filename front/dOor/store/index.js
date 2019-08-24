@@ -12,7 +12,43 @@ export const state = () => ({
     // signature: null
   },
   error: null,
-  events: []
+  events: [
+    {
+      state: 0,
+      name: '<eventName>',
+      address: '<eventAddress>',
+      qrValue: 'https://ipsum.serveo.net/challange?address=X&signature=Y',
+      qrGifBgSrc: '/img/cat.gif'
+    },
+    {
+      state: 1,
+      name: '<eventName>',
+      address: '<eventAddress>',
+      qrValue: 'https://ipsum.serveo.net/challange?address=X&signature=Y',
+      qrGifBgSrc: '/img/cat.gif'
+    },
+    {
+      state: 2,
+      name: '<eventName>',
+      address: '<eventAddress>',
+      qrValue: 'https://ipsum.serveo.net/challange?address=X&signature=Y',
+      qrGifBgSrc: '/img/cat.gif'
+    },
+    {
+      state: 3,
+      name: '<eventName>',
+      address: '<eventAddress>',
+      qrValue: 'https://ipsum.serveo.net/challange?address=X&signature=Y',
+      qrGifBgSrc: '/img/cat.gif'
+    },
+    {
+      state: 4,
+      name: '<eventName>',
+      address: '<eventAddress>',
+      qrValue: 'https://ipsum.serveo.net/challange?address=X&signature=Y',
+      qrGifBgSrc: '/img/cat.gif'
+    }
+  ]
 })
 
 export const mutations = {
@@ -40,18 +76,20 @@ export const actions = {
     }
     commit('UPDATE_EVENTS', events)
   },
-  async startEvent ({ commit }, eventAddress) {
+  async startEvent (eventAddress) {
     await window.$web3.contract.at('').startEvent(eventAddress)
   },
-  async endEvent ({ commit }, eventAddress) {
+  async endEvent (eventAddress) {
     await window.$web3.contract.at('').endEvent(eventAddress)
   },
-  async sendLeftovers ({ commit }, eventAddress) {
-    await window.$web3.contract.at('').sendLeftovers(eventAddress)
+  async withdrawStakes (eventAddress) {
+    await window.$web3.contract.at('').withdrawStakes(eventAddress)
   },
-  async cancelRSVP ({ commit }, eventAddress) {
+  async cancelRSVP (eventAddress) {
     await window.$web3.contract.at('').cancelRSVP(eventAddress)
   }
 }
 
-export const getters = {}
+export const getters = {
+  events: state => state.events
+}

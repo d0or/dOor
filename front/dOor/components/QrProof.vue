@@ -1,6 +1,18 @@
 <template>
-  <div>
-    <vue-qr :gif-bg-src="qrGifBgSrc" :text="qrValue" :size="qrSize" />
+  <div class="modal-card" style="width: auto">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Event {{ eventName }} Challange</p>
+    </header>
+    <section class="modal-card-body">
+      <div class="columns">
+        <div class="column">
+          <vue-qr :gif-bg-src="qrGifBgSrc" :text="qrValue" :size="qrSize" />
+        </div>
+      </div>
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button" type="button" @click="$parent.close()">Close</button>
+    </footer>
   </div>
 </template>
 <script>
@@ -10,6 +22,10 @@ export default {
     VueQr
   },
   props: {
+    eventName: {
+      type: String,
+      default: ''
+    },
     qrValue: {
       type: String,
       default: ''
@@ -21,7 +37,7 @@ export default {
   },
   data () {
     return {
-      qrSize: 150
+      qrSize: 300
     }
   }
 }

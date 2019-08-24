@@ -7,15 +7,14 @@
 
         <event-card :event="event">
           <div v-if="event.state === 0">
-            <b-button @click="callEvent('rsvp', event.address)">RSVP</b-button>
+            <b-button @click="callEventAction('rsvp', event.address)">RSVP</b-button>
           </div>
           <div v-if="event.state === 1">
-            <b-button @click="callEvent('cancel', event.address)">Cancel attendence</b-button>
+            <b-button @click="callEventAction('cancel', event.address)">Cancel attendence</b-button>
             <b-button @click="showQr(event)">Present challange</b-button>
-            <QrProof :qr-value="event.qrValue" :qr-gif-bg-src="event.qrGifBgSrc" />
           </div>
           <div v-if="event.state === 2">
-            <b-button @click="callEvent('withdraw', event.address)">Withdraw</b-button>
+            <b-button @click="callEventAction('withdraw', event.address)">Withdraw</b-button>
           </div>
           <div v-if="event.state === 3">
             <b-button disabled>Funds withdrew</b-button>
@@ -55,20 +54,28 @@ export default {
       events
     }
   },
+  mounted () {
+    if (!this.$store.state.account.address) { this.getAccount() }
+  },
   methods: {
-    callEvent (eventAddress, action) {
+    callEventAction (eventAddress, action) {
       // make sure account is available
       if (!this.$store.state.account.address) { this.getAccount() }
+      console.log('callEventAction', eventAddress, action)
       this.$store.dispatch(action, eventAddress)
-    },
-    cancel (eventAddress) {
-      this.$store.dispatch('cancel', eventAddress)
     },
     showQr (event) {
       console.log('event:', event)
-    },
-    withdraw (eventAddress) {
-      this.$store.dispatch('withdraw', eventAddress)
+      this.$buefy.modal.open({
+        parent: this,
+        component: QrProof,
+        hasModalCard: true,
+        customClass: 'custom-class custom-class-2',
+        props: {
+          'qrValue': event.qrValue,
+          'qrGifBgSrc': event.qrGifBgSrc
+        }
+      })
     },
     getAccount () {
       window.$web3.eth.getAccounts().then((accounts) => {
@@ -79,23 +86,19 @@ export default {
               address: accounts[0],
               balance: Number(window.$web3.utils.fromWei(balance)).toFixed(3).toLocaleString()
             }
-
             console.log(data)
             this.$store.dispatch('setAccount', data)
-            // this.$store.state.account.address = data.account
           })
         } else if (window.ethereum) {
         // privacy mode on
           window.ethereum.enable().then((accounts) => {
             window.$web3.eth.getBalance(accounts[0]).then((balance) => {
               const data = {
-                account: accounts[0],
+                address: accounts[0],
                 balance: Number(window.$web3.utils.fromWei(balance)).toFixed(3).toLocaleString()
               }
-
               console.log(data)
-
-              this.$store.state.account.address = data.account
+              this.$store.dispatch('setAccount', data)
             })
           })
         }
