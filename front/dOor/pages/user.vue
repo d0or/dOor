@@ -6,22 +6,8 @@
       <div v-for="event in events" :key="event.address" class="column is-half">
 
         <event-card :event="event">
-          <div v-if="event.state === 0">
-            <b-button @click="callEventAction('RSVPEvent', event.address)">RSVP</b-button>
-          </div>
-          <div v-if="event.state === 1">
-            <b-button @click="callEventAction('cancel', event.address)">Cancel attendence</b-button>
-            <b-button @click="showQr(event)">Present challange</b-button>
-          </div>
-          <div v-if="event.state === 2">
-            <b-button @click="callEventAction('withdraw', event.address)">Withdraw</b-button>
-          </div>
-          <div v-if="event.state === 3">
-            <b-button disabled>Funds withdrew</b-button>
-          </div>
-          <div v-if="event.state === 4">
-            <b-button disabled>Missed event</b-button>
-          </div>
+          <b-button @click="buyTicket(event)">Buy ticket</b-button>
+          <b-button @click="showQr(event)">Display challenge</b-button>
         </event-card>
 
       </div>
@@ -30,6 +16,8 @@
 </template>
 <script>
 /* eslint-disable no-console */
+import DoorFactory from '../../../backend/build/contracts/DoorFactory.json'
+// import Door from '../../../backend/build/contracts/Door.json'
 import EventCard from '~/components/EventCard'
 import QrProof from '~/components/QrProof'
 
@@ -48,18 +36,21 @@ export default {
 
     return {
       userStateMapping,
-      qrSize: 150
+      qrSize: 150,
+      events: []
     }
   },
   computed: {
-    events () {
+    /* events () {
       return this.$store.getters.events
     }
+*/
   },
   mounted () {
-    if (!this.$store.state.account.address) { this.getAccount() }
+    // if (!this.$store.state.account.address) { }
     // TODO: uncomment
     // await this.$store.dispatch('getEvents')
+    this.getAccount()
   },
   methods: {
     async callEventAction (action, eventAddress) {
@@ -82,32 +73,54 @@ export default {
         }
       })
     },
-    getAccount () {
-      window.$web3.eth.getAccounts().then((accounts) => {
-        if (accounts.length && accounts[0]) {
-          // just get the account address and balance
-          window.$web3.eth.getBalance(accounts[0]).then((balance) => {
-            const data = {
-              address: accounts[0],
-              balance: Number(window.$web3.utils.fromWei(balance)).toFixed(3).toLocaleString()
-            }
-            console.log(data)
-            this.$store.dispatch('setAccount', data)
-          })
-        } else if (window.ethereum) {
-        // privacy mode on
-          window.ethereum.enable().then((accounts) => {
-            window.$web3.eth.getBalance(accounts[0]).then((balance) => {
-              const data = {
-                address: accounts[0],
-                balance: Number(window.$web3.utils.fromWei(balance)).toFixed(3).toLocaleString()
-              }
-              console.log(data)
-              this.$store.dispatch('setAccount', data)
-            })
-          })
-        }
+
+    async buyTicket () {
+
+    },
+
+    async getDoors (account) {
+      const doorFactory = new window.$web3.eth.Contract(DoorFactory.abi, '0x3EeD37643788B70328d12e132A69E5A922B2c5c9', {
+        from: account,
+        gasPrice: '200000000'
       })
+      console.log('calling')
+      const doorCount = await doorFactory.methods.getDoorCount().call()
+      const promises = []
+      for (let i = 0; i < doorCount; i++) { // omg
+        promises.push(doorFactory.methods.getDoorByIndex(i).call())
+      }
+      Promise.all(promises).then((doorAdresses) => {
+        this.events = doorAdresses.map(address => ({
+          address,
+          title: 'foo'
+        }))
+        // console.log(doorAdresses)
+      })
+    },
+
+    async getBalance (account) {
+      const balance = await window.$web3.eth.getBalance(account)
+      const data = {
+        address: account,
+        balance: Number(window.$web3.utils.fromWei(balance)).toFixed(3).toLocaleString()
+      }
+      console.log(data)
+    },
+
+    async getAccount () {
+      const accounts = window.$web3.eth.getAccounts()
+
+      if (accounts.length && accounts[0]) {
+        // just get the account address and balance
+        this.getBalance(accounts[0])
+        // this.getDoors(accounts[0])
+        // this.$store.dispatch('setAccount', data)
+      } else if (window.ethereum) {
+        // privacy mode on
+        const accounts = await window.ethereum.enable()
+        // this.getBalance(accounts[0])
+        this.getDoors(accounts[0])
+      }
     }
     // ,
     // getAccount () {
@@ -123,4 +136,23 @@ export default {
     // }
   }
 }
+
+/*
+<div v-if="event.state === 0">
+            <b-button @click="callEventAction('RSVPEvent', event.address)">RSVP</b-button>
+          </div>
+          <div v-if="event.state === 1">
+            <b-button @click="callEventAction('cancel', event.address)">Cancel attendence</b-button>
+            <b-button @click="showQr(event)">Present challange</b-button>
+          </div>
+          <div v-if="event.state === 2">
+            <b-button @click="callEventAction('withdraw', event.address)">Withdraw</b-button>
+          </div>
+          <div v-if="event.state === 3">
+            <b-button disabled>Funds withdrew</b-button>
+          </div>
+          <div v-if="event.state === 4">
+            <b-button disabled>Missed event</b-button>
+          </div>
+          */
 </script>
