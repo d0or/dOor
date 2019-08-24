@@ -5,11 +5,9 @@
       <d-header />
     </section>
 
-    <section v-if="this.$store.state.error" class="main-content">
-      <b-message title="Danger" type="is-danger">
-        {{ this.$store.state.error }}
-      </b-message>
-    </section>
+    <b-message v-if="this.$store.state.error" title="Danger" type="is-danger">
+      {{ this.$store.state.error }}
+    </b-message>
 
     <section v-else class="main-content">
 
@@ -18,7 +16,7 @@
         <nuxt />
       </div>
     </section>
-  </div>
+    </section></div>
 </template>
 
 <script>

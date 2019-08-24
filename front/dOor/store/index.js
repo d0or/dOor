@@ -48,6 +48,9 @@ export const actions = {
   },
   async sendLeftovers ({ commit }, eventAddress) {
     await window.$web3.contract.at('').sendLeftovers(eventAddress)
+  },
+  async cancelRSVP ({ commit }, eventAddress) {
+    await window.$web3.contract.at('').cancelRSVP(eventAddress)
   }
 }
 
