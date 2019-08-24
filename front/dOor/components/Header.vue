@@ -45,11 +45,12 @@ export default {
       position: relative;
       float: left;
       font-size: 12em;
-      line-height: 1.5;
-      max-height: 290px;
+      line-height: 0;
+      max-height: 150px;
       text-align: center;
       width: -webkit-calc(100% / 4);
       width: calc(100% / 4);
+      margin-top:-50px;
     }
     .grid li span {
       display: inline-block;
