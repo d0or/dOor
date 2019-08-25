@@ -61,16 +61,29 @@ export default {
       await this.$store.dispatch(action, eventAddress)
       console.log('after')
     },
-    showQr (event) {
+    async sign (message) {
+      try {
+        const signature = await window.$web3.eth.personal.sign(message, this.account)
+        return signature
+      } catch (e) {
+        console.error(e)
+      }
+    },
+
+    async showQr (event) {
       console.log('event:', event)
+      const msg = event.address.slice(2)
+      const signature = await this.sign(msg)
+
       this.$buefy.modal.open({
         parent: this,
         component: QrProof,
         hasModalCard: true,
         customClass: 'custom-class custom-class-2',
         props: {
-          'qrValue': event.qrValue,
-          'qrGifBgSrc': event.qrGifBgSrc
+          event,
+          address: this.account,
+          signature
         }
       })
     },
@@ -92,7 +105,6 @@ export default {
         gasPrice: '200000000'
       })
 
-      console.log('calling')
       const doorCount = await doorFactory.methods.getDoorCount().call()
       const promises = []
       for (let i = 0; i < doorCount; i++) { // omg
