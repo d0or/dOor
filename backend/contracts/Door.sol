@@ -127,4 +127,11 @@ contract Door is Ownable, Initializable {
         return nameOfEvent;
     }
 
+    function getUserTicketStatus(address userAddress) public view returns (AttendanceTypes status){
+        return users[userAddress].ticketStatus;
+    }
+
+    function getUserHasWithdrawn(address userAddress) public view returns (bool indeed){
+        return users[userAddress].hasWithdrawn;
+    }
 }
