@@ -1,60 +1,71 @@
 <template>
   <section class="section">
-    <div class="columns is-mobile">
+    <h1 class="is-size-1">Check in</h1>
 
-      <card title="Read a qr code" icon="door-closed-lock">
-        <b-button @click="toggleScan">Scan!</b-button>
-        <b-button @click="fakeResult">Fake!</b-button>
-        <div v-if="scanning">
-          <qrcode-stream @decode="onDecode" @init="logErrors" />
-          <p>Result: {{ result }}</p>
-        </div>
+    <h1 v-if="random !== null" class="random-message has-text-center">{{ random }}</h1>
 
-        <VerifyAttendee v-if="result" :scan-result="result" />
+    <b-button size="is-large" type="is-primary" @click="start">Start</b-button>
+    <b-button size="is-large" type="is-secondary" @click="fakeResult">Fake!</b-button>
+    <b-button size="is-large" type="is-secondary" @click="reset">Reset</b-button>
 
-      </card>
-
+    <div v-if="scanning">
+      <qrcode-stream @decode="onDecode" />
+      <p v-if="result">Result: {{ result }}</p>
     </div>
+
+    <VerifyAttendee v-if="result" :scan-result="result" :challenge="random" @dismissed="reset" />
+
   </section>
 </template>
 
 <script>
 import { QrcodeStream } from 'vue-qrcode-reader'
-import Card from '~/components/Card'
 import VerifyAttendee from '~/components/VerifyAttendee'
 
 export default {
   name: 'Bouncer',
   components: {
     QrcodeStream,
-    Card,
     VerifyAttendee
   },
 
   data () {
     return {
       result: null,
-      scanning: false
+      scanning: false,
+      random: null
     }
   },
 
   methods: {
     onDecode (result) {
-      console.log('result', result)
-      this.result = result
+      this.result = JSON.parse(result)
+      this.scanning = false
     },
     fakeResult () {
-      this.result = {
-        publicAddress: '0xAC70DbA396847b433D3b889B3f798f21C0B024d4',
-        messageSignature: 'abcder'
-      }
+      this.result = { 'a': '0x467aa7e0addf094e140bf2bd4be706bd2e34e8d9', 's': '0xcb37027cdd495a0985976a4fdc7497616baee4712f4684cb5216da7b71ec054747e5ae33ad9cb2b0d99f00289388bac205376c38eb8d635834067d66d39377511b' }
     },
-    logErrors (promise) {
-      promise.catch(console.error)
+    start () {
+      this.result = null
+      this.scanning = true
+      this.random = '' + (1000 + Math.floor(900 * Math.random()))
     },
-    toggleScan () {
-      this.scanning = !this.scanning
+    reset () {
+      this.result = null
+      this.random = null
+      this.scanning = false
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  section h1 {
+    font-family: 'Poppins';
+    font-weight: 900;
+  }
+  h1.random-message {
+    font-size: 12em;
+    text-align: center;
+  }
+</style>

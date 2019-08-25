@@ -1,8 +1,14 @@
 <template>
   <div>
-    {{ scanResult.publicAddress }}
-    the balance is: {{ balance }}
-    <b-button @click="signAndVerify">verify!</b-button>
+    <h1 v-if="verified == -1" class="invalid">
+      verification challenge failed!
+    </h1>
+    <h1 v-if="verified == 1" class="valid">
+      verification succeeded! Let her in!
+    </h1>
+
+    <b-button v-if="verified === 0" size="is-large" type="is-primary" @click="verify">verify!</b-button>
+    <b-button v-if="verified !== 0" size="is-large" type="is-secondary" @click="dismiss">dismiss!</b-button>
   </div>
 </template>
 
@@ -16,45 +22,45 @@ export default {
     'scanResult': {
       type: Object,
       default: null
+    },
+    challenge: {
+      type: String,
+      default: ''
     }
+
   },
   data () {
     return {
-      balance: -1
+      verified: 0
     }
   },
+
   methods: {
-    async signAndVerify () {
-      const signature = await this.sign()
-      console.log(`signature is ${signature}`)
-      const signedbyAddress = await this.verify(signature)
-      console.log(`signed by ${signedbyAddress}`)
-    },
-
-    verify (signature) {
+    async verify () {
       const web3 = window.$web3
-      const secretMessage = 'BatMan!'
-      const address = web3.eth.personal.ecRecover(secretMessage, signature)
-      return address
+      const address = await web3.eth.personal.ecRecover(this.challenge, this.scanResult.s)
+      this.verified = (address === this.scanResult.a.toLowerCase()) ? 1 : -1
+
+      console.log(this.challenge)
+      console.log(address)
+      console.log(this.scanResult)
     },
-
-    async sign () {
-      const web3 = window.$web3
-
-      const secretMessage = 'BatMan!'
-      // this.balance = await web3.eth.getBalance(this.scanResult.publicAddress)
-
-      const accounts = await web3.eth.getAccounts()
-      const fstAccount = accounts[0]
-      // const msgHex = web3.utils.utf8ToHex(secretMessage)
-      // console.log(msgHex)
-      try {
-        const signature = await web3.eth.personal.sign(secretMessage, fstAccount)
-        return signature
-      } catch (e) {
-        console.error(e)
-      }
+    dismiss () {
+      this.verified = 0
+      this.$emit('dismissed')
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  h1 {
+    font-size: 12em;
+    text-align: center;
+    font-family: 'Poppins';
+    font-weight: 900;
+     &.valid { color: green }
+     &.invalid { color: red }
+  }
+
+</style>
