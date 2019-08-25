@@ -1,14 +1,14 @@
 <template>
   <div class="card">
     <header class="card-header">
-      <p class="card-header-title has-text-grey">
-        {{ event.name }}
+      <p class="card-header-title">
+        {{ event.address }}
       </p>
     </header>
 
     <div class="card-content">
       <div class="content has-text-centered">
-        {{ event.address }}
+        <h2 class="size-1">{{ event.title }}</h2>
       </div>
     </div>
     <footer class="card-footer">

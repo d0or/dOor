@@ -6,9 +6,15 @@
       <div v-for="event in events" :key="event.address" class="column is-half">
 
         <event-card :event="event">
-          <b-button @click="buyTicket(event)">Buy ticket ({{ event.price }}) </b-button>
-          <b-input v-model="challenge" />
-          <b-button :disabled="challengeValid" @click="showQr(event)">Start challenge</b-button>
+          <b-field grouped>
+            <p v-if="event.hasTicket">you're registered</p>
+            <b-button v-else size="is-medium" type="is-primary" @click="buyTicket(event)">Buy ticket ({{ event.price }}) </b-button>
+          </b-field>
+
+          <b-field grouped>
+            <b-input v-model="challenge" placeholder="challenge (1234)" />
+            <b-button :disabled="challengeValid" @click="showQr(event)">Start challenge</b-button>
+          </b-field>
         </event-card>
 
       </div>
@@ -17,10 +23,10 @@
 </template>
 <script>
 /* eslint-disable no-console */
-import DoorFactoryAbi from '../abis/DoorFactory.abi.json'
 import DoorAbi from '../abis/Door.abi.json'
 import EventCard from '~/components/EventCard'
 import QrProof from '~/components/QrProof'
+import doors from '~/lib/doors'
 
 export default {
   components: {
@@ -52,11 +58,12 @@ export default {
     }
 */
   },
-  mounted () {
+  async mounted () {
     // if (!this.$store.state.account.address) { }
     // TODO: uncomment
     // await this.$store.dispatch('getEvents')
-    this.getAccount()
+    this.account = await this.getAccount()
+    this.events = await doors(window.$web3, this.account)
   },
   methods: {
     async callEventAction (action, eventAddress) {
@@ -104,36 +111,6 @@ export default {
     },
     // 0x3EeD37643788B70328d12e132A69E5A922B2c5c9
 
-    async getDoors () {
-      const doorFactory = new window.$web3.eth.Contract(DoorFactoryAbi, '0x5D1aca1FD0f16d930030AeCf4FA68698A0Ce9112', {
-        from: this.account,
-        gasPrice: '200000000'
-      })
-
-      const doorCount = await doorFactory.methods.getDoorCount().call()
-      const promises = []
-      for (let i = 0; i < doorCount; i++) { // omg
-        promises.push(doorFactory.methods.getDoorByIndex(i).call())
-      }
-      const doorAdresses = await Promise.all(promises)
-      const doorsPromises = doorAdresses.map((doorAddress) => {
-        const doorContract = new window.$web3.eth.Contract(DoorAbi, doorAddress, {
-          from: this.account,
-          gasPrice: '200000000'
-        })
-        return new Promise((resolve, reject) => {
-          doorContract.methods.getEventPrice().call().then((price) => {
-            resolve({
-              address: doorAddress,
-              title: 'foo',
-              price
-            })
-          }) // wwwwwaaaaah
-        })
-      })
-      this.events = await Promise.all(doorsPromises)
-    },
-
     async getBalance () {
       const balance = await window.$web3.eth.getBalance(this.account)
       const data = {
@@ -144,21 +121,15 @@ export default {
     },
 
     async getAccount () {
-      const accounts = window.$web3.eth.getAccounts()
+      let accounts = window.$web3.eth.getAccounts()
 
       if (accounts.length && accounts[0]) {
-        this.account = accounts[0]
-        // just get the account address and balance
         this.getBalance()
-        // this.getDoors(accounts[0])
-        // this.$store.dispatch('setAccount', data)
       } else if (window.ethereum) {
         // privacy mode on
-        const accounts = await window.ethereum.enable()
-        this.account = accounts[0]
-        // this.getBalance(accounts[0])
-        this.getDoors()
+        accounts = await window.ethereum.enable()
       }
+      return accounts[0]
     }
     // ,
     // getAccount () {

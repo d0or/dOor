@@ -33,7 +33,15 @@ export default {
   },
   methods: {
     createEvent () {
-      console.log(`Creating event ${this.eventName} with ticket price ${this.price} and distribution = ${this.isDistributing}`)
+      this.$emit('createEvent', {
+        name: this.eventName,
+        price: this.price,
+        isDistributing: this.isDistributing
+      })
+
+      this.eventName = ''
+      this.price = null
+      this.isDistributing = 'Yes'
     }
   }
 }
