@@ -23,10 +23,10 @@
 </template>
 <script>
 /* eslint-disable no-console */
-import DoorFactoryAbi from '../abis/DoorFactory.abi.json'
 import DoorAbi from '../abis/Door.abi.json'
 import EventCard from '~/components/EventCard'
 import QrProof from '~/components/QrProof'
+import doors from '~/lib/doors'
 
 export default {
   components: {
@@ -58,11 +58,12 @@ export default {
     }
 */
   },
-  mounted () {
+  async mounted () {
     // if (!this.$store.state.account.address) { }
     // TODO: uncomment
     // await this.$store.dispatch('getEvents')
-    this.getAccount()
+    this.account = await this.getAccount()
+    this.events = await doors(window.$web3, this.account)
   },
   methods: {
     async callEventAction (action, eventAddress) {
@@ -110,36 +111,6 @@ export default {
     },
     // 0x3EeD37643788B70328d12e132A69E5A922B2c5c9
 
-    async getDoors () {
-      const doorFactory = new window.$web3.eth.Contract(DoorFactoryAbi, '0x5D1aca1FD0f16d930030AeCf4FA68698A0Ce9112', {
-        from: this.account,
-        gasPrice: '200000000'
-      })
-
-      const doorAdresses = await doorFactory.methods.getAllDoors().call()
-
-      const doorsPromises = doorAdresses.map((doorAddress) => {
-        const doorContract = new window.$web3.eth.Contract(DoorAbi, doorAddress, {
-          from: this.account,
-          gasPrice: '200000000'
-        })
-
-        return new Promise(async (resolve, reject) => {
-          const price = await doorContract.methods.getEventPrice().call()
-          const title = await doorContract.methods.getEventName().call()
-          const hasTicket = await doorContract.methods.userHasEventTicket().call()
-
-          resolve({
-            address: doorAddress,
-            title,
-            price,
-            hasTicket
-          })
-        }) // wwwwwaaaaah
-      })
-      this.events = await Promise.all(doorsPromises)
-    },
-
     async getBalance () {
       const balance = await window.$web3.eth.getBalance(this.account)
       const data = {
@@ -150,21 +121,15 @@ export default {
     },
 
     async getAccount () {
-      const accounts = window.$web3.eth.getAccounts()
+      let accounts = window.$web3.eth.getAccounts()
 
       if (accounts.length && accounts[0]) {
-        this.account = accounts[0]
-        // just get the account address and balance
         this.getBalance()
-        // this.getDoors(accounts[0])
-        // this.$store.dispatch('setAccount', data)
       } else if (window.ethereum) {
         // privacy mode on
-        const accounts = await window.ethereum.enable()
-        this.account = accounts[0]
-        // this.getBalance(accounts[0])
-        this.getDoors()
+        accounts = await window.ethereum.enable()
       }
+      return accounts[0]
     }
     // ,
     // getAccount () {
