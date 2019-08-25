@@ -7,7 +7,8 @@
 
         <event-card :event="event">
           <b-button @click="buyTicket(event)">Buy ticket ({{ event.price }}) </b-button>
-          <b-button @click="showQr(event)">Display challenge</b-button>
+          <b-input v-model="challenge" />
+          <b-button :disabled="challengeValid" @click="showQr(event)">Start challenge</b-button>
         </event-card>
 
       </div>
@@ -38,10 +39,14 @@ export default {
       userStateMapping,
       qrSize: 150,
       events: [],
-      account: {}
+      account: {},
+      challenge: ''
     }
   },
   computed: {
+    challengeValid () {
+      return this.challenge.length !== 4
+    }
     /* events () {
       return this.$store.getters.events
     }
@@ -72,7 +77,7 @@ export default {
 
     async showQr (event) {
       console.log('event:', event)
-      const msg = event.address.slice(2)
+      const msg = this.challenge
       const signature = await this.sign(msg)
 
       this.$buefy.modal.open({
@@ -81,7 +86,6 @@ export default {
         hasModalCard: true,
         customClass: 'custom-class custom-class-2',
         props: {
-          message: msg,
           address: this.account,
           signature
         }

@@ -48,7 +48,6 @@ export default {
   computed: {
     payload () {
       const pl = {
-        m: this.message,
         a: this.address,
         s: this.signature
       }

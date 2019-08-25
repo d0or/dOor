@@ -1,21 +1,14 @@
 <template>
   <div>
-    {{ scanResult.a }}
-    <div v-if="verification == 0">
-      unverified
-    </div>
-    <div v-else-if="verification == -1">
+    <h1 v-if="verified == -1" class="invalid">
       verification challenge failed!
-    </div>
-    <div v-else-if="verification == 1">
+    </h1>
+    <h1 v-if="verified == 1" class="valid">
       verification succeeded! Let her in!
-      <b-button>void ticket</b-button>
-    </div>
-    <div v-else-if="verification == 2">
-      void ticket
-    </div>
+    </h1>
 
-    <b-button @click="verify">verify!</b-button>
+    <b-button v-if="verified === 0" size="is-large" type="is-primary" @click="verify">verify!</b-button>
+    <b-button v-if="verified !== 0" size="is-large" type="is-secondary" @click="dismiss">dismiss!</b-button>
   </div>
 </template>
 
@@ -29,21 +22,41 @@ export default {
     'scanResult': {
       type: Object,
       default: null
+    },
+    challenge: {
+      type: Number,
+      default: 0
     }
+
   },
   data () {
     return {
-      verification: 0
+      verified: 0
     }
   },
-  methods: {
 
+  methods: {
     async verify () {
       const web3 = window.$web3
-      const address = await web3.eth.personal.ecRecover(this.scanResult.m, this.scanResult.s)
-      this.verification = (address === this.scanResult.a) ? 1 : -1
+      const address = await web3.eth.personal.ecRecover(this.challenge, this.scanResult.s)
+      this.verified = (address === this.scanResult.a) ? 1 : -1
+    },
+    dismiss () {
+      this.verified = 0
+      this.$emit('dismissed')
     }
-
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  h1 {
+    font-size: 12em;
+    text-align: center;
+    font-family: 'Poppins';
+    font-weight: 900;
+     &.valid { color: green }
+     &.invalid { color: red }
+  }
+
+</style>
