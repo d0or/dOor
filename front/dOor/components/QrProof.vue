@@ -41,7 +41,7 @@ export default {
   },
   data () {
     return {
-      qrSize: 600,
+      qrSize: 400,
       dotSize: 1
     }
   },
