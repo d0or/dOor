@@ -81,7 +81,7 @@ export default {
         hasModalCard: true,
         customClass: 'custom-class custom-class-2',
         props: {
-          event,
+          message: msg,
           address: this.account,
           signature
         }

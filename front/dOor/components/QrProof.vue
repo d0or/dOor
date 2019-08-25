@@ -26,6 +26,10 @@ export default {
       type: Object,
       default () { return {} }
     },
+    message: {
+      type: String,
+      default: ''
+    },
     address: {
       type: String,
       default: ''
@@ -44,10 +48,14 @@ export default {
   computed: {
     payload () {
       const pl = {
-        e: this.address,
+        m: this.message,
+        a: this.address,
         s: this.signature
       }
-      return JSON.stringify(pl)
+
+      const str = JSON.stringify(pl)
+      console.log(str)
+      return str
     }
   }
 }

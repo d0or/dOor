@@ -40,18 +40,17 @@ export default {
 
   methods: {
     onDecode (result) {
-      console.log('result', result)
       this.result = result
+      this.scanning = false
     },
     fakeResult () {
       this.result = {
-        publicAddress: '0xAC70DbA396847b433D3b889B3f798f21C0B024d4',
-        messageSignature: 'abcder'
+        'm': '97ADB1477B6B2f48384023211832Dfa5031f44e7',
+        'a': '0x467aa7e0addf094e140bf2bd4be706bd2e34e8d9',
+        's': '0x525ab3b015165fcef73dc634bdce749afd9762465d938d730f9334ef6b93dcc908fe6d84ade6064d16b3d971bc44626070f93a222ad7e67ba7262d375116ae031b'
       }
     },
-    logErrors (promise) {
-      promise.catch(console.error)
-    },
+
     toggleScan () {
       this.scanning = !this.scanning
     }
