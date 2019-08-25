@@ -4,9 +4,7 @@
 
     <h1 v-if="random !== null" class="random-message has-text-center">{{ random }}</h1>
 
-    <b-button size="is-large" type="is-primary" @click="start">Start</b-button>
-    <b-button size="is-large" type="is-secondary" @click="fakeResult">Fake!</b-button>
-    <b-button size="is-large" type="is-secondary" @click="reset">Reset</b-button>
+    <b-button v-if="!scanning" size="is-large" type="is-primary" @click="start">Start</b-button>
 
     <div v-if="scanning">
       <qrcode-stream @decode="onDecode" />
@@ -14,7 +12,7 @@
     </div>
 
     <VerifyAttendee v-if="result" :scan-result="result" :challenge="random" @dismissed="reset" />
-
+    <b-button size="is-large" type="is-secondary" @click="reset">Reset</b-button>
   </section>
 </template>
 
@@ -41,9 +39,6 @@ export default {
     onDecode (result) {
       this.result = JSON.parse(result)
       this.scanning = false
-    },
-    fakeResult () {
-      this.result = { 'a': '0x467aa7e0addf094e140bf2bd4be706bd2e34e8d9', 's': '0xcb37027cdd495a0985976a4fdc7497616baee4712f4684cb5216da7b71ec054747e5ae33ad9cb2b0d99f00289388bac205376c38eb8d635834067d66d39377511b' }
     },
     start () {
       this.result = null
