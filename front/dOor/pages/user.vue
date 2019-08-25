@@ -6,9 +6,15 @@
       <div v-for="event in events" :key="event.address" class="column is-half">
 
         <event-card :event="event">
-          <b-button @click="buyTicket(event)">Buy ticket ({{ event.price }}) </b-button>
-          <b-input v-model="challenge" />
-          <b-button :disabled="challengeValid" @click="showQr(event)">Start challenge</b-button>
+          <b-field grouped>
+            <p v-if="event.hasTicket">you're registered</p>
+            <b-button v-else size="is-medium" type="is-primary" @click="buyTicket(event)">Buy ticket ({{ event.price }}) </b-button>
+          </b-field>
+
+          <b-field grouped>
+            <b-input v-model="challenge" placeholder="challenge (1234)" />
+            <b-button :disabled="challengeValid" @click="showQr(event)">Start challenge</b-button>
+          </b-field>
         </event-card>
 
       </div>
@@ -110,26 +116,26 @@ export default {
         gasPrice: '200000000'
       })
 
-      const doorCount = await doorFactory.methods.getDoorCount().call()
-      const promises = []
-      for (let i = 0; i < doorCount; i++) { // omg
-        promises.push(doorFactory.methods.getDoorByIndex(i).call())
-      }
-      const doorAdresses = await Promise.all(promises)
+      const doorAdresses = await doorFactory.methods.getAllDoors().call()
+
       const doorsPromises = doorAdresses.map((doorAddress) => {
         const doorContract = new window.$web3.eth.Contract(DoorAbi, doorAddress, {
           from: this.account,
           gasPrice: '200000000'
         })
-        return new Promise((resolve, reject) => {
-          doorContract.methods.getEventPrice().call().then((price) => {
-            resolve({
-              address: doorAddress,
-              title: 'foo',
-              price
-            })
-          }) // wwwwwaaaaah
-        })
+
+        return new Promise(async (resolve, reject) => {
+          const price = await doorContract.methods.getEventPrice().call()
+          const title = await doorContract.methods.getEventName().call()
+          const hasTicket = await doorContract.methods.userHasEventTicket().call()
+
+          resolve({
+            address: doorAddress,
+            title,
+            price,
+            hasTicket
+          })
+        }) // wwwwwaaaaah
       })
       this.events = await Promise.all(doorsPromises)
     },
