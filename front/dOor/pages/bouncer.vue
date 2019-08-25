@@ -39,7 +39,7 @@ export default {
 
   methods: {
     onDecode (result) {
-      this.result = result
+      this.result = JSON.parse(result)
       this.scanning = false
     },
     fakeResult () {
@@ -48,7 +48,7 @@ export default {
     start () {
       this.result = null
       this.scanning = true
-      this.random = 1000 + Math.floor(900 * Math.random())
+      this.random = '' + (1000 + Math.floor(900 * Math.random()))
     },
     reset () {
       this.result = null

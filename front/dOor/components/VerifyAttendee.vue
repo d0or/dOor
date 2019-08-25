@@ -24,8 +24,8 @@ export default {
       default: null
     },
     challenge: {
-      type: Number,
-      default: 0
+      type: String,
+      default: ''
     }
 
   },
@@ -39,7 +39,11 @@ export default {
     async verify () {
       const web3 = window.$web3
       const address = await web3.eth.personal.ecRecover(this.challenge, this.scanResult.s)
-      this.verified = (address === this.scanResult.a) ? 1 : -1
+      this.verified = (address === this.scanResult.a.toLowerCase()) ? 1 : -1
+
+      console.log(this.challenge)
+      console.log(address)
+      console.log(this.scanResult)
     },
     dismiss () {
       this.verified = 0
