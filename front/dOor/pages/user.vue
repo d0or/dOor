@@ -98,9 +98,10 @@ export default {
         value: event.price
       })
     },
+    // 0x3EeD37643788B70328d12e132A69E5A922B2c5c9
 
     async getDoors () {
-      const doorFactory = new window.$web3.eth.Contract(DoorFactoryAbi, '0x3EeD37643788B70328d12e132A69E5A922B2c5c9', {
+      const doorFactory = new window.$web3.eth.Contract(DoorFactoryAbi, '0x5D1aca1FD0f16d930030AeCf4FA68698A0Ce9112', {
         from: this.account,
         gasPrice: '200000000'
       })

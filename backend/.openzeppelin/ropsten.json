@@ -1,11 +1,11 @@
 {
   "contracts": {
     "DoorFactory": {
-      "address": "0x94a95843CB7Ac1A89413D26Ee792B5044C7F8DA8",
-      "constructorCode": "60806040523480156100115760006000fd5b50610017565b61202a806100266000396000f3fe",
-      "bodyBytecodeHash": "fecd14b41411c785ba9485ef4ed879a96a62237ac43656a869b80d46d16d9e50",
-      "localBytecodeHash": "855aa5cfcfe635cb4758c6bafaac21d29007ec80c382dda135b1dad5813c13ce",
-      "deployedBytecodeHash": "855aa5cfcfe635cb4758c6bafaac21d29007ec80c382dda135b1dad5813c13ce",
+      "address": "0x4EA5c33D67eCf44D0f7072eB0485F8967aFe614b",
+      "constructorCode": "60806040523480156100115760006000fd5b50610017565b61212b806100266000396000f3fe",
+      "bodyBytecodeHash": "d9020c5f1c0d3cc2f5ef74bc412ccefeea592057ded67ab553b2148ae9b7f5bf",
+      "localBytecodeHash": "5da11aaa91edc1afb877913a7c5ac144c6f95db66b6a20aa2a26294279061b8f",
+      "deployedBytecodeHash": "5da11aaa91edc1afb877913a7c5ac144c6f95db66b6a20aa2a26294279061b8f",
       "types": {
         "t_address": {
           "id": "t_address",
@@ -37,20 +37,7 @@
         "hasInitialValuesInDeclarations": false,
         "uninitializedBaseContracts": [],
         "storageUncheckedVars": [],
-        "storageDiff": [
-          {
-            "action": "delete",
-            "original": {
-              "index": 0,
-              "contract": "Ownable",
-              "path": "contracts/Ownership.sol",
-              "label": "_owner",
-              "astId": 368,
-              "type": "t_address",
-              "src": "471:22:2"
-            }
-          }
-        ]
+        "storageDiff": []
       }
     },
     "Door": {
@@ -415,6 +402,13 @@
         "address": "0xEddF36EB53aE87FCa0e0549140d88148037E1ea0",
         "version": "1.0.0",
         "implementation": "0x94a95843CB7Ac1A89413D26Ee792B5044C7F8DA8",
+        "admin": "0x6d96aAE79399C6f2630d585BBb0FCF31cCa88fa9",
+        "kind": "Upgradeable"
+      },
+      {
+        "address": "0x5D1aca1FD0f16d930030AeCf4FA68698A0Ce9112",
+        "version": "1.0.0",
+        "implementation": "0x4EA5c33D67eCf44D0f7072eB0485F8967aFe614b",
         "admin": "0x6d96aAE79399C6f2630d585BBb0FCF31cCa88fa9",
         "kind": "Upgradeable"
       }
