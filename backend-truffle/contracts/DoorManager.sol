@@ -1,77 +1,61 @@
-//Meet.inc >>> ĐOor-Manager <<<
-//The ĐOor-Manager is a factory that allows event managers to deploy their own Door Event.
-//ĐOor opens doors at events that are anchored on the Ethereum blockchain.
-//
-//Last update: 10.11.2019
-
 pragma solidity ^0.5.0;
 
 import "@openzeppelin/contracts/ownership/Ownable.sol";
 import "@openzeppelin/contracts/lifecycle/Pausable.sol";
-import "./DoorEvent.sol";
+import "./Door.sol";
 
+contract DoorFactory is Ownable, Pausable {
 
-contract DoorManager is Ownable, Pausable{
-    //Variables
-    address[] private doorEventAddresses;
-    mapping (address => bool) private doorEventCreated;
+    address[] private doors;
+    mapping (address => bool) private createdConfirmations;
 
-    //Events
-    event NewDoorCreated(
-        address indexed doorOwner,
+    event Created(
+        address indexed owner,
         address indexed doorAddress,
-        string indexed doorName,
+        string indexed name,
         uint ticketPrice,
-        bool allowDisposeLeftovers
+        bool allowWithdrawal
     );
 
-    //Create new Door Event
-    function createNewDoorEvent(uint256 doorEventTicketPrice, string memory doorEventName, bool allowDisposeLeftovers) public whenNotPaused returns(address) {
-        //Creation of new Door Event
-        DoorEvent myDoor = new DoorEvent(doorEventTicketPrice, doorEventName, allowDisposeLeftovers);
+    //returns new door contract address
+    function createNewDoor(string memory _name, uint256 _ticketPrice, bool _allowWithdrawal) public whenNotPaused returns(address) {
+        
+        Door door = new Door(_name,_ticketPrice, _allowWithdrawal);
 
-        //Transfer ownership to caller
-        myDoor.transferOwnership(msg.sender);
+        door.transferOwnership(msg.sender);
 
-        //Append address of the new created event to the event array
-        doorEventAddresses.push(address(myDoor));
+        doors.push(address(door));
 
-        //Confirm creation of event
-        doorEventCreated[address(myDoor)] = true;
+        createdConfirmations[address(door)] = true; //is this necessary??
 
-        //Emit event: New Door Event created
-        emit NewDoorCreated(
+        emit Created(
             msg.sender,
-            address(myDoor),
-            doorEventName,
-            doorEventTicketPrice,
-            allowDisposeLeftovers
+            address(door),
+            _name,
+            _ticketPrice,
+            _allowWithdrawal
         );
 
-        return address(myDoor);
+        return address(door);
     }
 
-    //Get amount of Door Events created by this Door Manager
-    function getDoorEventCount() public view returns(uint) {
-        return doorEventAddresses.length;
+    function getDoorCount() public view returns(uint) {
+        return doors.length;
     }
 
-    //Get Door Event address by index
-    function getDoorEventByIndex(uint index) public view returns(address) {
-        return doorEventAddresses[index];
+    function getDoorByIndex(uint index) public view returns(address) {
+        return doors[index];
     }
 
-    //Get all Door Event address created by this Door Manager
     /**
       * @dev Use 'pragma experimental ABIEncoderV2;' instead of 'pragma solidity ^0.5.x;'
       * @notice Here be dragons (experimental!)
       */
-    function getAllDoorEvents() public view returns(address[] memory) {
-        return doorEventAddresses;
+    function getAllDoors() public view returns(address[] memory) {
+        return doors;
     }
 
-    //Validate Door Event creation
-    function getConfirmationDoorEventCreated(address doorEventAddress) public view returns(bool) {
-        return doorEventCreated[doorEventAddress];
+    function confirmDoorCreated(address _doorAddress) public view returns(bool) {
+        return createdConfirmations[_doorAddress];
     }
 }
