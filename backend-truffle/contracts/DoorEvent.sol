@@ -26,13 +26,13 @@ contract Door is Ownable, Pausable {
     
     event TicketSold(address indexed rsvp);
 
-    constructor(string memory _eventName, uint256 _ticketPrice, bool _allowsWithdraws) public whenNotPaused {
+    constructor(string memory _eventName, uint256 _ticketPrice, bool _allowsWithdraws) public {
         eventName = _eventName;
         ticketPrice = _ticketPrice;
         allowsWithdraws = _allowsWithdraws;
     }
     
-    function buyTicket() public payable {
+    function buyTicket() public whenNotPaused payable returns (bool) {
         require(
             tickets[msg.sender].ticketStatus == TicketStatus.NONE,
             'User has already a ticket'
@@ -43,8 +43,9 @@ contract Door is Ownable, Pausable {
         );
 
         tickets[msg.sender].ticketStatus = TicketStatus.REGISTERED;
-
+        
         emit TicketSold(msg.sender);
+        return true;
     }
     
     function getTicketStatus(address attendeeAddress) public view returns (TicketStatus) {
