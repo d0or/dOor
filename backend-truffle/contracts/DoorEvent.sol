@@ -52,8 +52,8 @@ contract DoorEvent is Ownable, Pausable {
     event LogDoorEventTicketSold(address indexed rsvp);
 
 
-    //Contract initializaition
-    constructor(string memory doorEventName, uint256 doorEventTicketPrice, bool allowRSVPsWithdrawFunds) public whenNotPaused {
+    //Contract initialization
+    constructor(string memory doorEventName, uint256 doorEventTicketPrice, bool allowRSVPsWithdrawFunds) public {
         eventName = doorEventName;
         ticketPrice = doorEventTicketPrice;
         rsvpCanWithdrawFunds = allowRSVPsWithdrawFunds;
@@ -65,7 +65,7 @@ contract DoorEvent is Ownable, Pausable {
      */
 
     //Attendee can purchase a ticket for this Door Event
-    function buyDoorEventTicket() public payable {
+    function buyDoorEventTicket() public whenNotPaused payable returns(bool success) {
         require(
             RSVPs[msg.sender].ticketStatus == rsvpStatus.NONE,
             'User has already a ticket'
@@ -80,6 +80,8 @@ contract DoorEvent is Ownable, Pausable {
 
         //Emit event
         emit LogDoorEventTicketSold(msg.sender);
+
+        return true;
     }
 
 
@@ -87,15 +89,15 @@ contract DoorEvent is Ownable, Pausable {
      * Support functions
      */
 
-    function getDoorEventName() public view returns (string memory DoorEventName) {
+    function getDoorEventName() public view returns(string memory DoorEventName) {
         return eventName;
     }
 
-    function getRsvpTicketStatus(address rsvpAddress) public view returns (rsvpStatus rsvpTicketStatus){
+    function getRsvpTicketStatus(address rsvpAddress) public view returns(rsvpStatus rsvpTicketStatus) {
         return RSVPs[rsvpAddress].ticketStatus;
     }
 
-    function getRsvpHasWithdrawn(address rsvpAddress) public view returns (bool indeed){
+    function getRsvpHasWithdrawn(address rsvpAddress) public view returns(bool indeed) {
         return RSVPs[rsvpAddress].hasWithdrawn;
     }
 }
