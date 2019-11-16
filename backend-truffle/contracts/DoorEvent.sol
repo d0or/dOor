@@ -1,58 +1,67 @@
+
 pragma solidity ^0.5.0;
 
 import "@openzeppelin/contracts/ownership/Ownable.sol";
 import "@openzeppelin/contracts/lifecycle/Pausable.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-contract Door is Ownable, Pausable {
+
+/**
+ * @title Meet.inc - "ĐOor-Event"
+ *  ĐOor opens doors at events that are anchored on the Ethereum blockchain.
+ * @notice The ĐOor-Event contract is an abstraction of a standard event
+ */
+contract DoorEvent is Ownable, Pausable {
     using SafeMath for uint;
-    
+
     string public eventName;
-    uint public ticketPrice;
-    bool public allowsWithdraws;
+    uint private ticketPrice;
+    bool private allowWithdrawal;
 
     enum TicketStatus {
-        NONE,       
+        NONE,
         REGISTERED,
         ATTENDED
     }
-    
-    struct attendeeStruct{
+
+    struct attendeeStruct {
         TicketStatus ticketStatus;
         bool hasWithdrawn;
     }
-    
-    mapping(address => attendeeStruct) private tickets;
-    
-    event TicketSold(address indexed rsvp);
+    mapping(address => attendeeStruct) private attendees;
 
-    constructor(string memory _eventName, uint256 _ticketPrice, bool _allowsWithdraws) public {
+
+    event LogDoorEventTicketSold(address indexed attendee);
+
+
+    constructor(string memory _eventName, uint256 _ticketPrice, bool _allowWithdrawal) public {
         eventName = _eventName;
         ticketPrice = _ticketPrice;
-        allowsWithdraws = _allowsWithdraws;
+        allowWithdrawal = _allowWithdrawal;
     }
-    
-    function buyTicket() public whenNotPaused payable returns (bool) {
+
+
+    function buyTicket() public whenNotPaused payable returns(bool) {
         require(
-            tickets[msg.sender].ticketStatus == TicketStatus.NONE,
-            'User has already a ticket'
+            attendees[msg.sender].ticketStatus == TicketStatus.NONE,
+            'User has already a ticket.'
         );
         require(
             msg.value == ticketPrice,
             "msg.value does not meet the ticket price."
         );
 
-        tickets[msg.sender].ticketStatus = TicketStatus.REGISTERED;
-        
-        emit TicketSold(msg.sender);
+        attendees[msg.sender].ticketStatus = TicketStatus.REGISTERED;
+
+        emit LogDoorEventTicketSold(msg.sender);
         return true;
     }
-    
-    function getTicketStatus(address attendeeAddress) public view returns (TicketStatus) {
-        return tickets[attendeeAddress].ticketStatus;
+
+    function getTicketStatus(address attendeeAddress) public view returns(TicketStatus) {
+        return attendees[attendeeAddress].ticketStatus;
     }
 
-    function getHasWithdrawn(address attendeeAddress) public view returns (bool){
-        return tickets[attendeeAddress].hasWithdrawn;
+    function getHasWithdrawn(address attendeeAddress) public view returns(bool) {
+        return attendees[attendeeAddress].hasWithdrawn;
     }
 }
