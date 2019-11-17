@@ -8,11 +8,11 @@ import "./DoorMeetup.sol";
 
 
 /**
- * @title Meet.inc - "ĐOor-Manager"
+ * @title Meet.inc - "ĐOor-Factory"
  *  ĐOor opens doors at events that are anchored on the Ethereum blockchain.
- * @notice The ĐOor-Manager is a factory that allows event managers to deploy their own Door Event and/or Door Meetup
+ * @notice The ĐOor-Factory allows event managers to deploy their own Door Event and/or Door Meetup
  */
-contract DoorManager is Ownable, Pausable{
+contract DoorFactory is Ownable, Pausable{
 
     address[] private doorEventAddresses;
     address[] private doorMeetupAddresses;
@@ -41,11 +41,9 @@ contract DoorManager is Ownable, Pausable{
     function createNewDoorEvent(string memory _name, uint256 _ticketPrice, bool _allowWithdrawal) public whenNotPaused returns(address) {
 
         DoorEvent door = new DoorEvent(_name, _ticketPrice, _allowWithdrawal);
-
         door.transferOwnership(msg.sender);
 
         doorEventAddresses.push(address(door));
-
         doorCreatedConfirmation[address(door)] = true;
 
         emit LogNewDoorCreated(
