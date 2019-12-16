@@ -1,10 +1,10 @@
 
 pragma solidity ^0.5.0;
 
-import "@openzeppelin/contracts/ownership/Ownable.sol";
-import "@openzeppelin/contracts/lifecycle/Pausable.sol";
-import "./DoorEvent.sol";
-import "./DoorMeetup.sol";
+//import "@openzeppelin/contracts/ownership/Ownable.sol";
+//import "@openzeppelin/contracts/lifecycle/Pausable.sol";
+import "./DoorEventSimple.sol";
+import "./DoorMeetupSimple.sol";
 
 
 /**
@@ -24,23 +24,53 @@ contract DoorFactory is Ownable, Pausable{
         MEETUP
     }
 
+    /**
+      * @notice Fee is just for Door Events. Value represents 0.x%
+      */
+    uint eventFee = 5;
+
     event LogNewDoorCreated(
         DoorType indexed doorType,
         address indexed doorOwner,
         address indexed doorAddress,
         string doorName,
-        uint ticketPrice,
-        bool allowWithdrawal
+        uint totalSeats
     );
+    event LogEventFeeChanged(address indexed owner, uint newFee);
+    event LogOwnerHasWithdrawn(address indexed owner, uint amount);
+
+    /**
+      * @notice Creation of a Door Meetup
+      *  The ĐOor-Meetup contract is an abstraction of a meetup event
+      * @return Address of deployed Door contract
+      */
+    function createNewDoorMeetup(string memory _meetupName, uint _totalSeats) public whenNotPaused returns(address) {
+
+        DoorMeetupSimple door = new DoorMeetupSimple(_meetupName, _totalSeats);
+        door.transferOwnership(msg.sender);
+
+        doorMeetupAddresses.push(address(door));
+        doorCreatedConfirmation[address(door)] = true;
+
+        emit LogNewDoorCreated(
+            DoorType.MEETUP,
+            msg.sender,
+            address(door),
+            _meetupName,
+            _totalSeats
+        );
+
+        return address(door);
+    }
 
     /**
       * @notice Creation of a Door Event
-      *  The ĐOor-Event contract is an abstraction of a standard event
+      *  The ĐOor-Event contract is an abstraction of an event
       * @return Address of deployed Door contract
       */
-    function createNewDoorEvent(string memory _name, uint256 _ticketPrice, bool _allowWithdrawal) public whenNotPaused returns(address) {
+    function createNewDoorEvent(string memory _eventName, uint _totalSeats, uint _ticketPrice) public whenNotPaused returns(address) {
 
-        DoorEvent door = new DoorEvent(_name, _ticketPrice, _allowWithdrawal);
+        DoorEventSimple door = new DoorEventSimple(_eventName, _totalSeats, _ticketPrice, eventFee, address(this));
         door.transferOwnership(msg.sender);
 
         doorEventAddresses.push(address(door));
@@ -50,14 +80,43 @@ contract DoorFactory is Ownable, Pausable{
             DoorType.EVENT,
             msg.sender,
             address(door),
-            _name,
-            _ticketPrice,
-            _allowWithdrawal
+            _eventName,
+            _totalSeats
         );
 
         return address(door);
     }
 
+    function collectEventFee(uint index) public returns(bool) {
+        address doorEventAddress = getDoorByIndex(DoorType.EVENT, index);
+        require(
+            confirmDoorCreated(doorEventAddress),
+            "Door is not created by this factory."
+        );
+
+        DoorEventSimple door = DoorEventSimple(doorEventAddress);
+        return door.transferFees();
+    }
+
+    function changeFee(uint newFee) external onlyOwner returns(bool) {
+        eventFee = newFee;
+
+        emit LogEventFeeChanged(msg.sender, newFee);
+        return true;
+    }
+
+    /**
+      * @dev Preparation for EIP 1884 (https://eips.ethereum.org/EIPS/eip-1884) in Istanbul hard fork
+      *  Avoidance of Solidity's transfer() or send() methods
+      */
+    function withdrawalByOwner() external onlyOwner whenNotPaused returns(bool) {
+        uint amount = address(this).balance;
+        (bool success, ) = msg.sender.call.value(amount)("");
+        require(success, "Transfer failed.");
+
+        emit LogOwnerHasWithdrawn(msg.sender, amount);
+        return true;
+    }
 
     function getDoorCount(DoorType _doorType) public view returns(uint) {
         if(_doorType == DoorType.EVENT){

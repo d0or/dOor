@@ -1,6 +1,6 @@
 {
   "name": "door-core",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "ĐOor opens doors at events that are anchored on the Ethereum blockchain. Bouncers scan your dynamic QR code to verify that you're a registered ticket owner.",
   "main": "index.js",
   "directories": {
