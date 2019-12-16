@@ -14,6 +14,7 @@ contract DoorMeetupSimple is Door {
     constructor(string memory _eventName, uint _totalSeats) Door(_eventName, _totalSeats) public {
     }
 
+
     function toggleAttendance() public whenNotPaused returns(bool) {
         if (attendees[msg.sender].ticketStatus == TicketStatus.NONE){
             issueTicket(msg.sender);
@@ -22,6 +23,19 @@ contract DoorMeetupSimple is Door {
             revokeTicket(msg.sender);
         }
 
+        return true;
+    }
+
+    /**
+      * @dev EIP 1884 (https://eips.ethereum.org/EIPS/eip-1884) within Istanbul hard fork
+      *  Avoidance of Solidity's transfer() or send() methods
+      */
+    function withdrawalByOwner() external onlyOwner whenNotPaused returns(bool) {
+        uint amount = getDoorBalance();
+        (bool success, ) = msg.sender.call.value(amount)("");
+        require(success, "Transfer failed.");
+
+        emit LogOwnerHasWithdrawn(msg.sender, amount);
         return true;
     }
 }
