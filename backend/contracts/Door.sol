@@ -1,137 +1,134 @@
+
 pragma solidity ^0.5.0;
 
-import "./Ownership.sol";
-import "@openzeppelin/upgrades/contracts/Initializable.sol";
+//import "@openzeppelin/contracts/ownership/Ownable.sol";
+//import "@openzeppelin/contracts/lifecycle/Pausable.sol";
 
-contract DoorFactory {
-    address[] public doorAddresses;
 
-    event NewDoorCreated(
-        address indexed doorOwner,
-        address indexed doorAddress,
-        string indexed doorName,
-        uint ticketPrice,
-        bool allowDisposeLeftovers
-    );
+/**
+ * @title Meet.inc - "ĐOor"
+ *  ĐOor opens doors at events that are anchored on the Ethereum blockchain.
+ * @notice The ĐOor contract contains basic ĐOor functionalities
+ */
+contract Door is Ownable, Pausable {
 
-    function createNewDoor(uint256 _price, string memory eventName, bool allowDisposeLeftovers) public returns(address) {
-        Door door = new Door();
-        door.initialize(_price, eventName, allowDisposeLeftovers);
-        door.transferOwnership(msg.sender);
-        doorAddresses.push(address(door));
+    string public eventName;
+    uint public totalSeats;
+    uint public takenSeats;
+    uint public attendeesCount;
 
-        emit NewDoorCreated(
-            msg.sender,
-            address(door),
-            eventName,
-            _price,
-            allowDisposeLeftovers
-        );
-        return address(door);
+    enum DoorStatus {
+        PLANNED,
+        OPEN,
+        CLOSED
+    }
+    DoorStatus internal doorStatus;
+
+    enum TicketStatus {
+        NONE,
+        REGISTERED,
+        ATTENDED
     }
 
-    function getDoorCount() public view returns(uint) {
-        return doorAddresses.length;
+    struct attendeeStruct {
+        TicketStatus ticketStatus;
     }
-
-    function getDoorByIndex(uint index) public view returns(address) {
-        return address(doorAddresses[index]);
-    }
-
-    function getAllDoors() public view returns(address[] memory) {
-        return doorAddresses;
-    }
-}
-
-contract Door is Ownable, Initializable {
-
-    string public nameOfEvent;
-    uint public ticketPrice;
-    bool private canWithdrawFunds;
-
-    bool private eventHasStarted;
-    bool private eventHasEnded;
-
-    uint attendeesCount;
-    uint256 shares;
-
-    enum AttendanceTypes { NONE, REGISTERED, ATTENDED }
-
-    struct UserStruct{
-        AttendanceTypes ticketStatus;
-        bool hasWithdrawn;
-    }
-    mapping(address => UserStruct) public users;
+    mapping(address => attendeeStruct) internal attendees;
 
 
-    function initialize(uint256 _price, string memory eventName, bool allowDisposeLeftovers) public initializer payable  {
-         ticketPrice = _price;
-         nameOfEvent = eventName;
-         canWithdrawFunds = allowDisposeLeftovers;
-    }
-
-    function startEvent() public onlyOwner {
-        require(!eventHasStarted, 'The event has already been started.');
-        eventHasStarted = true;
-    }
-
-    function endEvent() public onlyOwner {
-        require(!eventHasEnded && eventHasStarted, 'The event has already ended or hasnt started yet.');
-        eventHasEnded = true;
-
-        shares = address(this).balance / attendeesCount;
-    }
-
-    function getEventPrice() public view returns (uint price) {
-        return ticketPrice;
-    }
-
-    function buyEventTicket() public payable {
-        require(users[msg.sender].ticketStatus == AttendanceTypes.NONE, 'User has already a ticket');
+    modifier whenDoorIsClosed() {
         require(
-            msg.value == ticketPrice,
-            "msg.value does not meet the ticket price."
+            doorStatus == DoorStatus.CLOSED,
+            "Door is not closed yet."
+        );
+        _;
+    }
+
+
+    event LogDoorTicketIssued(address indexed attendee, uint takenSeats);
+    event LogDoorTicketRevoked(address indexed attendee, uint takenSeats);
+    event LogDoorStatusChanged(address indexed owner, DoorStatus doorStatus);
+    event LogAttendeeHasAttended(address indexed owner, address attendee, uint attendeesCount);
+    event LogOwnerHasWithdrawn(address indexed owner, uint amount);
+
+
+    constructor(string memory _eventName, uint _totalSeats) internal {
+        eventName   = _eventName;
+        totalSeats  = _totalSeats;
+    }
+
+
+    /**
+      * @dev Interal functions that are to be called from other contract functions
+      */
+    function issueTicket(address attendeeAddress) internal whenNotPaused returns(bool) {
+        require(doorStatus < DoorStatus.CLOSED, "Door is closed.");
+        require(
+            attendees[attendeeAddress].ticketStatus == TicketStatus.NONE,
+            "User has already a ticket."
+        );
+        require(totalSeats > takenSeats, "All seats are taken.");
+
+        attendees[attendeeAddress].ticketStatus = TicketStatus.REGISTERED;
+        takenSeats++;
+
+        emit LogDoorTicketIssued(attendeeAddress, takenSeats);
+        return true;
+    }
+
+    function revokeTicket(address attendeeAddress) internal whenNotPaused returns(bool) {
+        require(doorStatus < DoorStatus.CLOSED, "Door is closed.");
+        require(
+            attendees[attendeeAddress].ticketStatus == TicketStatus.REGISTERED,
+            "User has no ticket or has already attended."
         );
 
-        users[msg.sender].ticketStatus = AttendanceTypes.REGISTERED;
+        attendees[attendeeAddress].ticketStatus = TicketStatus.NONE;
+        takenSeats--;
+
+        emit LogDoorTicketRevoked(attendeeAddress, takenSeats);
+        return true;
     }
 
-    function userHasEventTicket() public view returns (bool) {
-        return users[msg.sender].ticketStatus == AttendanceTypes.REGISTERED;
+    function openDoor() public onlyOwner whenNotPaused returns(bool) {
+        require(doorStatus == DoorStatus.PLANNED, "Door has already been openend.");
+        doorStatus = DoorStatus.OPEN;
+
+        emit LogDoorStatusChanged(msg.sender, doorStatus);
+        return true;
     }
 
-    function setUserHasAttendedByOwner(address payable userAddress) public onlyOwner{
-        // assuming that the event creator is honest and will verify correctly
-        require(eventHasStarted, 'The event has not been started yet.');
-        require(users[userAddress].ticketStatus != AttendanceTypes.ATTENDED, 'User has already attended.');
-        users[userAddress].ticketStatus = AttendanceTypes.ATTENDED;
+    function closeDoor() public onlyOwner whenNotPaused returns(bool) {
+        require(doorStatus == DoorStatus.OPEN, "Door is not open.");
+        doorStatus = DoorStatus.CLOSED;
+
+        emit LogDoorStatusChanged(msg.sender, doorStatus);
+        return true;
+    }
+
+    function setUserHasAttended(address attendeeAddress) public onlyOwner whenNotPaused returns(bool) {
+        require(doorStatus == DoorStatus.OPEN, "Door is not open.");
+        require(
+            attendees[attendeeAddress].ticketStatus == TicketStatus.REGISTERED,
+            "Attendee is not registered."
+        );
+
+        attendees[attendeeAddress].ticketStatus = TicketStatus.ATTENDED;
         attendeesCount++;
+
+        emit LogAttendeeHasAttended(msg.sender, attendeeAddress, attendeesCount);
+        return true;
     }
 
-    function getEventBalance() public view returns (uint256 eventBalance){
+    function userHasTicket() public view returns(bool) {
+        return attendees[msg.sender].ticketStatus == TicketStatus.REGISTERED;
+    }
+
+    function getDoorBalance() public view returns (uint) {
         return address(this).balance;
     }
 
-    function withdraw() public {
-        require(eventHasEnded == true, 'Event has not ended yet.');
-        require(canWithdrawFunds, 'You are not allowed to withdraw funds.');
-        require(users[msg.sender].ticketStatus == AttendanceTypes.ATTENDED, 'User didnt attend.');
-        require(users[msg.sender].hasWithdrawn, 'Users funds are already withdrawn.');
-
-        users[msg.sender].hasWithdrawn = true;
-
-        msg.sender.transfer(shares);
-    }
-
-    function getEventName() public view returns (string memory name) {
-        return nameOfEvent;
-    }
-
-    function getUserTicketStatus(address userAddress) public view returns (AttendanceTypes status){
-        return users[userAddress].ticketStatus;
-    }
-
-    function getUserHasWithdrawn(address userAddress) public view returns (bool indeed){
-        return users[userAddress].hasWithdrawn;
+    function getTicketStatus(address attendeeAddress) public view returns(TicketStatus) {
+        return attendees[attendeeAddress].ticketStatus;
     }
 }
